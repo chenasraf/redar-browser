@@ -1,0 +1,30 @@
+.header {
+  display: grid;
+  grid-template-columns: [method] 100px [address] 10fr [go] 70px;
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+  background-image: linear-gradient(to bottom, white, #f3f3f3 88%, #eee);
+}
+
+.method {
+  grid-area: method;
+  margin-right: 8px;
+}
+
+.address {
+  grid-area: address;
+  & input {
+    width: 100%;
+    padding: 7px 14px;
+    font-size: 1rem;
+  }
+}
+
+.go {
+  grid-area: go;
+  & button {
+    width: 100%;
+    font-size: 1rem;
+    padding: 7px 14px;
+  }
+}

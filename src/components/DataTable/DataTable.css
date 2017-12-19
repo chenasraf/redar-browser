@@ -1,0 +1,11 @@
+.DataTable {
+  width: 100%;
+
+  & thead th {
+    background: #acf;
+  }
+
+  & tbody td, & thead th {
+    padding:  7px 12px;
+  }
+}

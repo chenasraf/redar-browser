@@ -1,0 +1,10 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: "Helvetica Neue", "Calibri", "Segoe UI", "Arial", sans-serif;
+  font-size: 13px;
+}
+
+* {
+  box-sizing: border-box;
+}

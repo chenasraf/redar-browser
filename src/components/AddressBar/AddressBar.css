@@ -1,0 +1,8 @@
+.address-bar {
+  & input {
+    background: white;
+    border-radius: 5px 0 0 5px;
+    height: 30px;
+    border: 1px solid #ccc;
+  }
+}
