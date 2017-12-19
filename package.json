@@ -24,6 +24,7 @@
     "react": "^16.0.0",
     "react-dev-utils": "^4.0.1",
     "react-dom": "^16.0.0",
+    "react-flux": "^1.0.1",
     "source-map-loader": "^0.2.1",
     "style-loader": "0.18.2",
     "sw-precache-webpack-plugin": "0.11.4",
@@ -40,6 +41,7 @@
     "whatwg-fetch": "2.0.3"
   },
   "scripts": {
+    "dev": "node scripts/start.js",
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
     "test": "node scripts/test.js --env=jsdom"
@@ -52,6 +54,7 @@
     "@types/react-dom": "^16.0.2",
     "@types/react-select": "^1.0.59",
     "copy-webpack-plugin": "^4.3.0",
+    "generate": "^0.14.0",
     "postcss-nesting": "^4.2.1",
     "postcss-variables": "^1.1.1",
     "react-css-modules": "^4.7.1",

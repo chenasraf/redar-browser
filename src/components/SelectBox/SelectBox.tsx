@@ -2,15 +2,16 @@ import * as React from 'react'
 import * as I from './SelectBox.module'
 import * as css from './SelectBox.css'
 
-type T = string | number | {}
-
-class SelectBox extends React.Component<I.Props<T>, I.State<T>> {
+class SelectBox extends React.Component<I.Props, I.State> {
   private inputRef: HTMLInputElement
 
-  constructor(props: I.Props<T>) {
+  constructor(props: I.Props) {
     super(props)
+
+    const selected = this.findOption(props.value)
+
     this.state = {
-      selected: undefined,
+      selected,
       options: this.props.options,
       open: false,
       input: ''
@@ -24,24 +25,34 @@ class SelectBox extends React.Component<I.Props<T>, I.State<T>> {
   }
 
   private get label(): string {
-    return this.state.selected ? this.state.selected.label : this.state.input
+    return this.state.selected ? this.state.selected.label : this.state.input.toString()
   }
 
   public toggleDropdown(state: boolean = !this.state.open) {
     this.setState({ open: state })
   }
 
-  public componentWillReceiveProps(nextProps: I.Props<T>) {
+  private findOption(value: any) {
+    return this.props.options.find((option: I.Option) => value === option.value)
+  }
+
+  public componentWillReceiveProps(nextProps: I.Props) {
     if (nextProps.value !== this.props.value) {
-      this.setState({
-        input: nextProps.value
-      })
+      const selected = this.findOption(nextProps.value)
+
+      if (selected) {
+        this.select(selected)
+      } else {
+        this.setState({
+          input: nextProps.value.toString()
+        })
+      }
     }
   }
 
   public search(e: React.ChangeEvent<HTMLInputElement>) {
     const value = (e.target as HTMLInputElement).value
-    const options = this.props.options.filter((option: I.Option<T>) => (
+    const options = this.props.options.filter((option: I.Option) => (
       (option.label.toLowerCase().indexOf(value) > -1) ||
       (String(option.value).toLowerCase().indexOf(value) > -1)
     ))
@@ -52,7 +63,7 @@ class SelectBox extends React.Component<I.Props<T>, I.State<T>> {
     })
   }
 
-  public select(option: I.Option<T>, e?: React.MouseEvent<HTMLDivElement>) {
+  public select(option: I.Option, e?: React.MouseEvent<HTMLDivElement>) {
     console.log('selecting', option)
     
     if (e) {
@@ -69,7 +80,7 @@ class SelectBox extends React.Component<I.Props<T>, I.State<T>> {
   public render() {
     const options: Array<JSX.Element> = []
     
-    this.state.options.forEach((option: I.Option<T>) => {
+    this.state.options.forEach((option: I.Option) => {
       const classNames = [
         css.option,
         option.className,
