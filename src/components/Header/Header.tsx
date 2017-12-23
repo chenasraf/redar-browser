@@ -4,7 +4,8 @@ import * as I from './Header.module'
 import AddressBar from 'components/AddressBar/AddressBar'
 import SelectBox, { Option, styles as selectBoxStyle } from 'components/SelectBox/SelectBox'
 import Button from 'components/Button/Button'
-import axios from 'axios'
+import axios, { AxiosResponse } from 'axios'
+import { dispatch } from 'common/Dispatcher'
 
 class Header extends React.Component<I.IProps, I.IState> {
   private httpMethods = [
@@ -37,6 +38,8 @@ class Header extends React.Component<I.IProps, I.IState> {
     axios.request({ method, url, data: [
         { a: 1, b: 2, c: 3 }
       ]
+    }).then((response: AxiosResponse) => {
+      dispatch('set-data', response.data)
     })
   }
 

@@ -1,4 +1,4 @@
-import App from './App/App'
+import App, { TProps as AppStoreProps } from './App/App'
 import { Container } from 'flux/utils'
 import { Store } from 'common/Dispatcher'
 import * as React from 'react'
@@ -7,7 +7,7 @@ function getStores() {
   return [ Store ]
 }
 
-function getState() {
+function getState(): AppStoreProps {
   return {
     store: Store.getState()
   }

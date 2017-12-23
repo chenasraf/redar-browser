@@ -1,5 +1,5 @@
 export interface Props {
-  data: any[]
+  store: any
 }
 
 export interface State {

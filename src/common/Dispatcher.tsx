@@ -9,35 +9,43 @@ export interface Action<T = any> {
 
 export const AppDispatcher = new Dispatcher<Action>()
 
-type TState = {}
+type TState = Immutable.OrderedMap<string, any>
 
 class AppStore extends ReduceStore<TState, Action> {
-  private state: TState
-
   constructor() {
     super(AppDispatcher)
-    this.state = {}
   }
 
   getInitialState() {
-    return Immutable.OrderedMap([])
-  }
-
-  getState() {
-    return this.state
+    return Immutable.OrderedMap<string, any>()
   }
 
   reduce(state: TState, action: Action) {
     switch (action.name) {
       case 'get-data':
         return state
+      case 'set-table-data':
+        return state.set('tableData', action.payload)
       default:
         return state
     }
   }
 }
 
-const Store = new AppStore()
+export function dispatch(name: string, payload: any) {
+  AppDispatcher.dispatch({
+    name, payload
+  })
+}
 
+export function register(name: string, callback: (payload: any) => void): string {
+  return AppDispatcher.register((payload: Action) => {
+    if (payload.name === name) {
+      callback(payload.payload)
+    }
+  })
+}
+
+const Store = new AppStore()
 export default AppDispatcher
 export { Store }

@@ -3,14 +3,19 @@ import * as css from './App.css'
 import Header from 'components/Header/Header'
 import DataTable from 'components/DataTable/DataTable'
 import axios, { AxiosResponse } from 'axios'
+import { Store } from 'common/Dispatcher'
 
 const data = [
   { first: 'John', last: 'Doe', age: 22 },
   { first: 'Jane', last: 'Doe', age: 24 },
 ]
 
-class App extends React.Component<{}> {
-  constructor(props: {}) {
+export interface TProps {
+  store: any
+}
+
+class App extends React.Component<TProps> {
+  constructor(props: any) {
     super(props)
     console.debug('App Init!')
 
@@ -33,11 +38,8 @@ class App extends React.Component<{}> {
   render() {
     return (
       <div className={css.App}>
-        <Header />
-        <div style={{background: 'yellow'}}>
-          {JSON.stringify(this.props)}
-        </div>
-        <DataTable data={data} />
+        <Header {...this.props} />
+        <DataTable {...this.props} />
       </div>
     )
   }
