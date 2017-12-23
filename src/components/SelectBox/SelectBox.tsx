@@ -12,7 +12,7 @@ class SelectBox extends React.Component<I.Props, I.State> {
 
     this.state = {
       selected,
-      options: this.props.options,
+      options: props.options,
       open: false,
       input: ''
     }
@@ -74,7 +74,12 @@ class SelectBox extends React.Component<I.Props, I.State> {
     this.setState({
       selected: option,
       input: ''
-    }, () => this.toggleDropdown(false))
+    }, () => {
+      this.toggleDropdown(false)
+      if (typeof this.props.onChange === 'function') {
+        this.props.onChange(this.state.selected!, e)
+      }
+    })
   }
   
   public render() {
@@ -119,3 +124,5 @@ class SelectBox extends React.Component<I.Props, I.State> {
 }
 
 export default SelectBox
+export * from './SelectBox.module'
+export { css as styles }

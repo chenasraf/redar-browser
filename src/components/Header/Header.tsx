@@ -1,34 +1,43 @@
 import * as React from 'react'
 import * as css from './Header.css'
 import * as I from './Header.module'
-import * as selectBoxStyle from 'components/SelectBox/SelectBox.css'
 import AddressBar from 'components/AddressBar/AddressBar'
-import SelectBox from 'components/SelectBox/SelectBox'
+import SelectBox, { Option, styles as selectBoxStyle } from 'components/SelectBox/SelectBox'
 import Button from 'components/Button/Button'
-import { Option } from 'components/SelectBox/SelectBox.module'
+import axios from 'axios'
 
 class Header extends React.Component<I.IProps, I.IState> {
   private httpMethods = [
-    { label: 'GET', value: 'GET', className: selectBoxStyle.option },
-    { label: 'POST', value: 'POST', className: selectBoxStyle.option },
-    { label: 'PUT', value: 'PUT', className: selectBoxStyle.option },
-    { label: 'DELETE', value: 'DELETE', className: selectBoxStyle.option },
-  ] as Option<string>[]
+    { label: 'GET', value: 'GET' },
+    { label: 'POST', value: 'POST' },
+    { label: 'PUT', value: 'PUT' },
+    { label: 'DELETE', value: 'DELETE' },
+  ] as Array<Option<string>>
 
   constructor(props: I.IProps) {
     super(props)
     this.state = {
-      uri: '',
-      method: 'GET',
+      url: localStorage.lastUrl || '',
+      method: localStorage.lastMethod || 'GET',
     }
   }
 
-  private changeURI(location: string) {
-    this.setState({ uri: location })
+  private changeURL(url: string) {
+    this.setState({ url })
+    localStorage.lastUrl = url
   }
-
+  
   private changeMethod(method: string) {
     this.setState({ method })
+    localStorage.lastMethod = method
+  }
+
+  private go() {
+    const { method, url: url } = this.state
+    axios.request({ method, url, data: [
+        { a: 1, b: 2, c: 3 }
+      ]
+    })
   }
 
   render() {
@@ -44,10 +53,11 @@ class Header extends React.Component<I.IProps, I.IState> {
           />
           </div>
           <div className={css.address}>
-            <AddressBar handleChange={(value) => this.changeURI(value)}/>
+            <AddressBar url={this.state.url}
+              handleChange={(value) => this.changeURL(value)}/>
           </div>
           <div className={css.go}>
-            <Button>Go</Button>
+            <Button onClick={() => this.go()}>Go</Button>
           </div>
       </div>
     )

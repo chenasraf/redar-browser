@@ -19,8 +19,9 @@
     "baseUrl": "./",
     "allowSyntheticDefaultImports": true,
     "paths": {
-      "src/*": ["src/*"],
-      "components/*": ["src/components/*"]
+      "src/*": ["./src/*"],
+      "components/*": ["./src/components/*"],
+      "common/*": ["./src/common/*"]
     }
   },
   "exclude": [

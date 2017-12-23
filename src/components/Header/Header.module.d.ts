@@ -2,6 +2,6 @@ export interface IProps {
 }
 
 export interface IState {
-  uri: string
+  url: string
   method: string
 }

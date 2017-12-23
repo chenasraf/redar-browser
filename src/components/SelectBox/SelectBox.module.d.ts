@@ -5,7 +5,7 @@ export interface Props<T = ValueTypes> {
   value?: T
   options: Option<T>[]
   placeholder?: string
-  onChange?(value: T, e: React.ChangeEvent<HTMLInputElement>): void
+  onChange?(option: Option<T>, e?: React.MouseEvent<HTMLDivElement>): void
   className?: string
 }
 

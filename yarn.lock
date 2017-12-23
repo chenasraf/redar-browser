@@ -8,6 +8,10 @@
   dependencies:
     "@types/filesystem" "*"
 
+"@types/fbemitter@*":
+  version "2.0.32"
+  resolved "https://registry.yarnpkg.com/@types/fbemitter/-/fbemitter-2.0.32.tgz#8ed204da0f54e9c8eaec31b1eec91e25132d082c"
+
 "@types/filesystem@*":
   version "0.0.28"
   resolved "https://registry.yarnpkg.com/@types/filesystem/-/filesystem-0.0.28.tgz#3fd7735830f2c7413cb5ac45780bc45904697b0e"
@@ -17,6 +21,13 @@
 "@types/filewriter@*":
   version "0.0.28"
   resolved "https://registry.yarnpkg.com/@types/filewriter/-/filewriter-0.0.28.tgz#c054e8af4d9dd75db4e63abc76f885168714d4b3"
+
+"@types/flux@^3.1.4":
+  version "3.1.4"
+  resolved "https://registry.yarnpkg.com/@types/flux/-/flux-3.1.4.tgz#2573d724ad85edb53727af118003efd755af9a6b"
+  dependencies:
+    "@types/fbemitter" "*"
+    "@types/react" "*"
 
 "@types/jest@^21.1.8":
   version "21.1.8"
@@ -789,6 +800,13 @@ aws4@^1.2.1, aws4@^1.6.0:
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/aws4/-/aws4-1.6.0.tgz#83ef5ca860b2b32e4a0deedee8c771b9db57471e"
 
+axios@^0.17.1:
+  version "0.17.1"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.17.1.tgz#2d8e3e5d0bdbd7327f91bc814f5c57660f81824d"
+  dependencies:
+    follow-redirects "^1.2.5"
+    is-buffer "^1.1.5"
+
 babel-code-frame@6.26.0, babel-code-frame@^6.11.0, babel-code-frame@^6.22.0, babel-code-frame@^6.26.0:
   version "6.26.0"
   resolved "https://registry.yarnpkg.com/babel-code-frame/-/babel-code-frame-6.26.0.tgz#63fd43f7dc1e3bb7ce35947db8fe369a3f58c74b"
@@ -1405,10 +1423,6 @@ base-task@^0.7.0:
     composer "^0.14.0"
     is-valid-app "^0.3.0"
 
-base64-js@0.0.8:
-  version "0.0.8"
-  resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-0.0.8.tgz#1101e9544f4a76b1bc3b26d452ca96d7a35e7978"
-
 base64-js@^1.0.2:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.2.1.tgz#a91947da1f4a516ea38e5b4ec0ec3773675e0886"
@@ -1453,7 +1467,7 @@ block-stream@*:
   dependencies:
     inherits "~2.0.0"
 
-bluebird@^3.0.3, bluebird@^3.4.7, bluebird@^3.5.0:
+bluebird@^3.4.7, bluebird@^3.5.0:
   version "3.5.1"
   resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-3.5.1.tgz#d9551f9de98f1fcda1e683d17ee91a0602ee2eb9"
 
@@ -1839,13 +1853,6 @@ chokidar@^1.6.0, chokidar@^1.7.0:
 chownr@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/chownr/-/chownr-1.0.1.tgz#e2a75042a9551908bebd25b8523d5f9769d79181"
-
-chrome@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/chrome/-/chrome-0.1.0.tgz#f61d9b792fefe8c194c7056ddc102c726a864329"
-  dependencies:
-    exeq "^2.2.0"
-    plist "^1.1.0"
 
 ci-info@^1.0.0:
   version "1.1.1"
@@ -3174,13 +3181,6 @@ execa@^0.7.0:
     signal-exit "^3.0.0"
     strip-eof "^1.0.0"
 
-exeq@^2.2.0:
-  version "2.4.0"
-  resolved "https://registry.yarnpkg.com/exeq/-/exeq-2.4.0.tgz#4ddf2a684648c427ad799349cf33bd75358f884a"
-  dependencies:
-    bluebird "^3.0.3"
-    native-or-bluebird "^1.2.0"
-
 exit-hook@^1.0.0:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/exit-hook/-/exit-hook-1.1.1.tgz#f05ca233b48c05d54fff07765df8507e95c02ff8"
@@ -3409,7 +3409,13 @@ fb-watchman@^2.0.0:
   dependencies:
     bser "^2.0.0"
 
-fbjs@^0.8.16, fbjs@^0.8.9:
+fbemitter@^2.0.0:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/fbemitter/-/fbemitter-2.1.1.tgz#523e14fdaf5248805bb02f62efc33be703f51865"
+  dependencies:
+    fbjs "^0.8.4"
+
+fbjs@^0.8.0, fbjs@^0.8.16, fbjs@^0.8.4, fbjs@^0.8.9:
   version "0.8.16"
   resolved "https://registry.yarnpkg.com/fbjs/-/fbjs-0.8.16.tgz#5e67432f550dc41b572bf55847b8aca64e5337db"
   dependencies:
@@ -3585,6 +3591,19 @@ flush-write-stream@^1.0.0:
   dependencies:
     inherits "^2.0.1"
     readable-stream "^2.0.4"
+
+flux@^3.1.3:
+  version "3.1.3"
+  resolved "https://registry.yarnpkg.com/flux/-/flux-3.1.3.tgz#d23bed515a79a22d933ab53ab4ada19d05b2f08a"
+  dependencies:
+    fbemitter "^2.0.0"
+    fbjs "^0.8.0"
+
+follow-redirects@^1.2.5:
+  version "1.2.6"
+  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.2.6.tgz#4dcdc7e4ab3dd6765a97ff89c3b4c258117c79bf"
+  dependencies:
+    debug "^3.1.0"
 
 for-in@^0.1.3:
   version "0.1.8"
@@ -4431,6 +4450,10 @@ iferr@^0.1.5:
 ignore@^3.3.5:
   version "3.3.7"
   resolved "https://registry.yarnpkg.com/ignore/-/ignore-3.3.7.tgz#612289bfb3c220e186a58118618d5be8c1bab021"
+
+immutable@^3.8.2:
+  version "3.8.2"
+  resolved "https://registry.yarnpkg.com/immutable/-/immutable-3.8.2.tgz#c2439951455bb39913daf281376f1530e104adf3"
 
 import-lazy@^2.1.0:
   version "2.1.0"
@@ -5732,10 +5755,6 @@ lodash.where@^3.1.0:
   version "4.17.4"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.4.tgz#78203a4d1c328ae1d86dca6460e369b57f4055ae"
 
-lodash@^3.10.1, lodash@^3.5.0:
-  version "3.10.1"
-  resolved "https://registry.yarnpkg.com/lodash/-/lodash-3.10.1.tgz#5bf45e8e49ba4189e17d482789dfd15bd140b7b6"
-
 log-ok@^0.1.1:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/log-ok/-/log-ok-0.1.1.tgz#bea3dd36acd0b8a7240d78736b5b97c65444a334"
@@ -6236,10 +6255,6 @@ nanomatch@^1.2.5:
 nanoseconds@^0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/nanoseconds/-/nanoseconds-0.1.0.tgz#69ec39fcd00e77ab3a72de0a43342824cd79233a"
-
-native-or-bluebird@^1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/native-or-bluebird/-/native-or-bluebird-1.2.0.tgz#39c47bfd7825d1fb9ffad32210ae25daadf101c9"
 
 natural-compare@^1.4.0:
   version "1.4.0"
@@ -6917,15 +6932,6 @@ pkg-store@^0.2.2:
     union-value "^0.2.3"
     write-json "^0.2.2"
 
-plist@^1.1.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/plist/-/plist-1.2.0.tgz#084b5093ddc92506e259f874b8d9b1afb8c79593"
-  dependencies:
-    base64-js "0.0.8"
-    util-deprecate "1.0.2"
-    xmlbuilder "4.0.0"
-    xmldom "0.1.x"
-
 plugin-error@^0.1.2:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/plugin-error/-/plugin-error-0.1.2.tgz#3b9bb3335ccf00f425e07437e19276967da47ace"
@@ -7311,7 +7317,7 @@ promise@8.0.1:
   dependencies:
     asap "~2.0.3"
 
-promise@^7.0.1, promise@^7.1.1:
+promise@^7.1.1:
   version "7.3.1"
   resolved "https://registry.yarnpkg.com/promise/-/promise-7.3.1.tgz#064b72602b18f90f29192b8b1bc418ffd1ebd3bf"
   dependencies:
@@ -7591,13 +7597,6 @@ react-dom@^16.0.0:
 react-error-overlay@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/react-error-overlay/-/react-error-overlay-3.0.0.tgz#c2bc8f4d91f1375b3dad6d75265d51cd5eeaf655"
-
-react-flux@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/react-flux/-/react-flux-1.0.1.tgz#eb19f465a626a91edcf887b08c8df71a576fb300"
-  dependencies:
-    lodash "^3.10.1"
-    promise "^7.0.1"
 
 react-input-autosize@^2.0.1:
   version "2.0.1"
@@ -9323,7 +9322,7 @@ use@^2.0.0:
     isobject "^3.0.0"
     lazy-cache "^2.0.2"
 
-util-deprecate@1.0.2, util-deprecate@~1.0.1:
+util-deprecate@~1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/util-deprecate/-/util-deprecate-1.0.2.tgz#450d4dc9fa70de732762fbd2d4a28981419a0ccf"
 
@@ -9716,16 +9715,6 @@ xml-char-classes@^1.0.0:
 xml-name-validator@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/xml-name-validator/-/xml-name-validator-2.0.1.tgz#4d8b8f1eccd3419aa362061becef515e1e559635"
-
-xmlbuilder@4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/xmlbuilder/-/xmlbuilder-4.0.0.tgz#98b8f651ca30aa624036f127d11cc66dc7b907a3"
-  dependencies:
-    lodash "^3.5.0"
-
-xmldom@0.1.x:
-  version "0.1.27"
-  resolved "https://registry.yarnpkg.com/xmldom/-/xmldom-0.1.27.tgz#d501f97b3bdb403af8ef9ecc20573187aadac0e9"
 
 "xtend@>=4.0.0 <4.1.0-0", xtend@^4.0.0, xtend@^4.0.1, xtend@~4.0.0, xtend@~4.0.1:
   version "4.0.1"
