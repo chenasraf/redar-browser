@@ -9,3 +9,12 @@
     padding:  7px 12px;
   }
 }
+
+.col-unknown {
+
+}
+
+.col-id {
+  width: 0.1vw;
+  background: #eee;
+}

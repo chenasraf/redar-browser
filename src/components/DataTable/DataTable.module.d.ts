@@ -5,4 +5,5 @@ export interface Props {
 export interface State {
   columns: string[]
   data: any[]
+  viewKey: string | null
 }
