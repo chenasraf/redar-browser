@@ -5,7 +5,7 @@ import AddressBar from 'components/AddressBar/AddressBar'
 import SelectBox, { Option, styles as selectBoxStyle } from 'components/SelectBox/SelectBox'
 import Button from 'components/Button/Button'
 import axios, { AxiosResponse } from 'axios'
-import { dispatch } from 'common/Dispatcher'
+import { dispatch, ActionTypes } from 'common/Dispatcher'
 
 class Header extends React.Component<I.IProps, I.IState> {
   private httpMethods = [
@@ -39,8 +39,45 @@ class Header extends React.Component<I.IProps, I.IState> {
         { a: 1, b: 2, c: 3 }
       ]
     }).then((response: AxiosResponse) => {
-      dispatch('set-data', response.data)
+      const { data } = response
+      let viewKey = this.props.store.get('viewKey', null)
+      let tableData
+      
+      if (viewKey && data.hasOwnProperty(viewKey)) {
+        tableData = data[viewKey]
+      } else {
+        for (const k in data) {
+          if (data.hasOwnProperty(k) && data[k].constructor === Array) {
+            viewKey = k
+            tableData = data[k]
+          }
+        }
+      }
+
+      dispatch(ActionTypes.set, {
+        fullData: data,
+        viewKey,
+        tableData,
+        columns: this.getDataColumns(tableData)
+      })
     })
+  }
+  
+  private getDataColumns(data?: any) {
+    if (!data.length) {
+      return []
+    }
+
+    const columns = Object.keys(data[0])
+    const idIdx = columns.indexOf('_id')
+
+    if (idIdx >= 0) {
+      columns.splice(idIdx, 1)
+    }
+
+    columns.unshift('_id')
+
+    return columns
   }
 
   render() {

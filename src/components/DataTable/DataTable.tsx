@@ -1,7 +1,7 @@
 import * as React from 'react'
 import * as I from './DataTable.module'
 import * as css from './DataTable.css'
-import { register } from 'common/Dispatcher'
+import { register, dispatch, ActionTypes } from 'common/Dispatcher'
 
 class DataTable extends React.Component<I.Props, I.State> {
   private columns: string[]
@@ -11,30 +11,31 @@ class DataTable extends React.Component<I.Props, I.State> {
     super(props)
 
     this.state = {
-      columns: [],
-      data: [],
-      viewKey: null,
+      columns: props.store.get('columns', []),
+      data: props.store.get('tableData', []),
     }
   }
 
   public componentWillMount() {
-    this.listener = register('set-data', (data: any) => {
+    this.listener = register(ActionTypes.set, (data: any) => {
       console.debug('new data incoming to table:', data)
-      this.updateData(data)
+      this.updateData({
+        data: data.tableData || [],
+        columns: data.columns || [],
+      })
     })
   }
 
   private updateData(data: any) {
-    const parsed = this.parseData(data)
-    const columns = this.getDataColumns(parsed)
+    const parsed = this.parseData(data.data)
     this.setState({
       data: parsed,
-      columns
+      columns: data.columns
     })
   }
 
   private parseData(data: any) {
-    let parsed = this.getArrayData(data)
+    let parsed = data
     console.debug('got array data:', parsed)
 
     if (!parsed) {
@@ -49,51 +50,8 @@ class DataTable extends React.Component<I.Props, I.State> {
     return parsed
   }
 
-  private getArrayData(data: any, key?: string) {
-    key = key || this.state.viewKey || undefined
-
-    if (data.constructor === Array) {
-      return data
-    }
-    
-    if (key && data.hasOwnProperty(key)) {
-      return data[key]
-    }
-    
-    for (const k in data) {
-      if (data.hasOwnProperty(k) && data[k].constructor === Array) {
-        return data[k]
-      }
-    }
-
-    return []
-  }
-  
-  private getDataColumns(data?: any) {
-    data = data || this.state.data || []
-
-    if (this.state.columns.length) {
-      return this.state.columns
-    }
-
-    if (!data.length) {
-      return []
-    }
-
-    const columns = Object.keys(data[0])
-    const idIdx = columns.indexOf('_id')
-
-    if (idIdx >= 0) {
-      columns.splice(idIdx, 1)
-    }
-
-    columns.unshift('_id')
-
-    return columns
-  }
-
   private getColumnRowData(row: any, i: number) {
-    return this.getDataColumns().map((col, j) => {
+    return this.state.columns.map((col, j) => {
       const s = (css as any)
       const camelCase = col
         .replace(/([^a-z]+[a-z0-9])/i, ($1) => $1.toUpperCase())
@@ -126,7 +84,7 @@ class DataTable extends React.Component<I.Props, I.State> {
       <table className={css.dataTable}>
         <thead>
           <tr>
-            {this.getDataColumns().map(col => <th key={col}>{col}</th>)}
+            {this.state.columns.map(col => <th key={col}>{col}</th>)}
           </tr>
         </thead>
         <tbody>
