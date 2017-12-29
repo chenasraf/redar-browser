@@ -9,15 +9,27 @@ JSON Redar lets you view your results as data tables which are sortable and filt
 
 1. Install via Chrome Web Store (TBD)
 
-### Development
+### Dependencies
+These steps must be run before developing/building the extension. (installing from Chrome Web Store does not require those):
+
 1. Install the latest Node & NPM via [https://nodejs.org](https://nodejs.org)
-1. Then build the project:
+1. Then, run in your shell:
     ```sh
     npm install -g yarn # install yarn
     yarn install        # install dependencies
-    yarn dev            # start developing
     ```
 
-### Building
-1. Run through steps 1-3 in [the Development section](#development)
-1. Build the production version with `yarn build`
+### Development
+Start developing with `yarn dev` or `yarn start` (alias).  
+This will build a webpack dev server for you to work on, with hot reload.
+
+#### We are using:
+- React / Flux
+- TypeScript (with TSLint)
+- PostCSS (with PostCSS `$variables`, and `& child` nesting)
+
+### Building Extension
+- Build the production version with `yarn build`.  
+- You can load the extension into your [chrome://extensions](chrome://extensions) page to test the extension in "production" mode.  
+
+Only small changes needed to be made to run in extension mode, mainly to move the request handling to the background page, but you should test the output to make sure everything runs smoothly.
