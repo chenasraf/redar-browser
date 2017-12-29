@@ -20,6 +20,7 @@ class Header extends React.Component<I.IProps, I.IState> {
     this.state = {
       url: localStorage.lastUrl || '',
       method: localStorage.lastMethod || 'GET',
+      requestPayload: localStorage.lastRequestPayload || '',
     }
   }
 
@@ -32,47 +33,64 @@ class Header extends React.Component<I.IProps, I.IState> {
     this.setState({ method })
     localStorage.lastMethod = method
   }
+  
+  private changeRequestPayload(requestPayload: string) {
+    this.setState({ requestPayload })
+    localStorage.lastRequestPayload = requestPayload
+  }
 
   private go() {
     const { method, url: url } = this.state
-    axios.request({ method, url, data: [
-        { a: 1, b: 2, c: 3 }
-      ]
-    }).then((response: AxiosResponse) => {
-      const { data } = response
-      let viewKey = this.props.store.get('viewKey', null)
-      let tableData
-      
-      if (viewKey && data.hasOwnProperty(viewKey)) {
-        tableData = data[viewKey]
-      } else {
-        for (const k in data) {
-          if (data.hasOwnProperty(k) && data[k].constructor === Array) {
-            viewKey = k
-            tableData = data[k]
+
+    axios.request({ method, url, data: this.requestPayload })
+      .then((response: AxiosResponse) => {
+        const { data } = response
+        let viewKey = this.props.store.get('viewKey', null)
+        let tableData
+        
+        if (viewKey && data.hasOwnProperty(viewKey)) {
+          tableData = data[viewKey]
+        } else {
+          for (const k in data) {
+            if (data.hasOwnProperty(k) && data[k] && data[k].constructor === Array) {
+              viewKey = k
+              tableData = data[k]
+            }
           }
         }
-      }
 
-      dispatch(ActionTypes.set, {
-        fullData: data,
-        viewKey,
-        tableData,
-        columns: this.getDataColumns(tableData)
+        if (!tableData) {
+          tableData = [data]
+        }
+
+        dispatch(ActionTypes.set, {
+          fullData: data,
+          viewKey,
+          tableData,
+          columns: this.getDataColumns(tableData)
+        })
       })
-    })
+  }
+
+  private get requestPayload() {
+    return JSON.parse(this.state.requestPayload)
   }
   
   private getDataColumns(data?: any) {
-    if (!data.length) {
+    if (!data || !data.length) {
       return []
     }
 
     const columns = Object.keys(data[0])
-    const idIdx = columns.indexOf('_id')
+    const idIdx = columns.map(s => s.toLocaleLowerCase()).indexOf('id')
+    const _idIdx = columns.map(s => s.toLocaleLowerCase()).indexOf('_id')
 
     if (idIdx >= 0) {
       columns.splice(idIdx, 1)
+    }
+
+    if (_idIdx >= 0) {
+      columns.splice(_idIdx, 1)
     }
 
     columns.unshift('_id')
@@ -98,6 +116,11 @@ class Header extends React.Component<I.IProps, I.IState> {
           </div>
           <div className={css.go}>
             <Button onClick={() => this.go()}>Go</Button>
+          </div>
+          <div className={css.payload}>
+            <textarea name="requestPayload"
+              value={this.state.requestPayload}
+              onChange={(e) => this.changeRequestPayload(e.target.value)} />
           </div>
       </div>
     )

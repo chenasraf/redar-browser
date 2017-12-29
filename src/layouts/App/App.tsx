@@ -1,6 +1,7 @@
 import * as React from 'react'
 import * as css from './App.css'
 import Header from 'components/Header/Header'
+import KeyList from 'components/KeyList/KeyList'
 import DataTable from 'components/DataTable/DataTable'
 import axios, { AxiosResponse } from 'axios'
 import { Store } from 'common/Dispatcher'
@@ -17,7 +18,6 @@ export interface TProps {
 class App extends React.Component<TProps> {
   constructor(props: any) {
     super(props)
-    console.debug('App Init!')
 
     /// #if EXTENSION
     axios.defaults.adapter = (config) => {
@@ -39,6 +39,7 @@ class App extends React.Component<TProps> {
     return (
       <div className={css.App}>
         <Header {...this.props} />
+        <KeyList {...this.props} />
         <DataTable {...this.props} />
       </div>
     )

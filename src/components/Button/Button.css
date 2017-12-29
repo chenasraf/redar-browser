@@ -1,6 +1,8 @@
+@import "../../_variables.css";
+
 .button {
   border: none;
-  background: #05a;
+  background: $highlight;
   color: white;
   border-radius: 0 5px 5px 0;
   height: 30px;

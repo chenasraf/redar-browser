@@ -1,5 +1,7 @@
 .DataTable {
   width: 100%;
+  grid-area: main;
+  padding: 5px;
 
   & thead th {
     background: #acf;

@@ -3,7 +3,6 @@ export interface IProps {
 }
 
 export interface IState {
-  url: string
-  method: string
-  requestPayload: string
+  keyList: string[]
+  viewKey: string
 }

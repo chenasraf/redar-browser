@@ -9,7 +9,6 @@ if (typeof chrome.runtime.onMessage.addListener === 'function') {
   chrome.runtime.onMessage.addListener(
     (message: {action: string, payload?: any}, sender: any, sendResponse: (response: any) => void) => {
       if (message.action === 'request') {
-        console.debug('message received:', message.payload)
         axios.request(message.payload).then((response: AxiosResponse) => sendResponse(response))
       }
       return true

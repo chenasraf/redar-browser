@@ -1,0 +1,25 @@
+@import "../../_variables.css";
+
+.KeyList {
+  grid-area: sidebar;
+  border-right: 1px solid #bbb;
+}
+
+.item {
+  padding: 7px 10px;
+  cursor: pointer;
+  color: #888;
+
+  &.valid {
+    color: #000;
+    
+    &:hover {
+      background: #ddd;
+    }
+  }
+
+  &.selected {
+    background: $highlight;
+    color: white;
+  }
+}

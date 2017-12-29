@@ -64,7 +64,6 @@ class SelectBox extends React.Component<I.Props, I.State> {
   }
 
   public select(option: I.Option, e?: React.MouseEvent<HTMLDivElement>) {
-    console.log('selecting', option)
     
     if (e) {
       e.preventDefault()

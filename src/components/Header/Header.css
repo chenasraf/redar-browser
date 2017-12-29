@@ -1,6 +1,11 @@
 .header {
   display: grid;
+  grid-area: browse;
   grid-template-columns: [method] 100px [address] 10fr [go] 70px;
+  grid-template-areas: 
+    "method address go"
+    "payload payload payload"
+  ;
   padding: 10px;
   border-bottom: 1px solid #ccc;
   background-image: linear-gradient(to bottom, white, #f3f3f3 88%, #eee);
@@ -17,6 +22,17 @@
     width: 100%;
     padding: 7px 14px;
     font-size: 1rem;
+  }
+}
+
+.payload {
+  grid-area: payload;
+
+  & textarea {
+    width: 100%;
+    height: 50px;
+    border: 1px solid #ccc;
+    margin-top: 7px;
   }
 }
 

@@ -7021,6 +7021,15 @@ postcss-flexbugs-fixes@3.2.0:
   dependencies:
     postcss "^6.0.1"
 
+postcss-import@^11.0.0:
+  version "11.0.0"
+  resolved "https://registry.yarnpkg.com/postcss-import/-/postcss-import-11.0.0.tgz#a962e2df82d3bc5a6da6a386841747204f41ef5b"
+  dependencies:
+    postcss "^6.0.1"
+    postcss-value-parser "^3.2.3"
+    read-cache "^1.0.0"
+    resolve "^1.1.7"
+
 postcss-load-config@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/postcss-load-config/-/postcss-load-config-1.2.0.tgz#539e9afc9ddc8620121ebf9d8c3673e0ce50d28a"
@@ -7628,6 +7637,12 @@ read-all-stream@^3.0.0:
   dependencies:
     pinkie-promise "^2.0.0"
     readable-stream "^2.0.0"
+
+read-cache@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/read-cache/-/read-cache-1.0.0.tgz#e664ef31161166c9751cdbe8dbcf86b5fb58f774"
+  dependencies:
+    pify "^2.3.0"
 
 read-chunk@^2.0.0:
   version "2.1.0"

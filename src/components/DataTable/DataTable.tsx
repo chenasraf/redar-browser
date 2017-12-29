@@ -1,7 +1,7 @@
 import * as React from 'react'
 import * as I from './DataTable.module'
 import * as css from './DataTable.css'
-import { register, dispatch, ActionTypes } from 'common/Dispatcher'
+import Dispatcher, { register, dispatch, ActionTypes } from 'common/Dispatcher'
 
 class DataTable extends React.Component<I.Props, I.State> {
   private columns: string[]
@@ -18,12 +18,15 @@ class DataTable extends React.Component<I.Props, I.State> {
 
   public componentWillMount() {
     this.listener = register(ActionTypes.set, (data: any) => {
-      console.debug('new data incoming to table:', data)
       this.updateData({
         data: data.tableData || [],
         columns: data.columns || [],
       })
     })
+  }
+
+  public componentWillUnmount() {
+    Dispatcher.unregister(this.listener)
   }
 
   private updateData(data: any) {
@@ -36,14 +39,13 @@ class DataTable extends React.Component<I.Props, I.State> {
 
   private parseData(data: any) {
     let parsed = data
-    console.debug('got array data:', parsed)
 
     if (!parsed) {
       return []
     }
 
     parsed = parsed.map(row => {
-      row._id = row._id || row.id || 'row-' + Math.random()
+      row._id = row._id || row.id || 'row-' + parseInt((Math.random() * 10000).toString(), 10)
       return row
     })
 
@@ -58,7 +60,6 @@ class DataTable extends React.Component<I.Props, I.State> {
         .replace(/[^a-z]/i, '')
 
       const asClsName = camelCase[0].toUpperCase() + camelCase.slice(1)
-      console.log(camelCase, asClsName, css)
 
       const cls = [
         s.hasOwnProperty('col' + asClsName) ? s['col' + asClsName] : css.colUnknown,
@@ -69,7 +70,7 @@ class DataTable extends React.Component<I.Props, I.State> {
       return (
         <td key={[col, i, j].join('_')}
           className={cls}>
-          {row[col]}
+          {JSON.stringify(row[col], undefined, '  ')}
         </td>
       )
     })
@@ -77,7 +78,7 @@ class DataTable extends React.Component<I.Props, I.State> {
 
   public render() {
     if (!this.state.data.length) {
-      return <div>No data to show!</div>
+      return <div className={css.dataTable}>No data to show!</div>
     }
 
     return (
