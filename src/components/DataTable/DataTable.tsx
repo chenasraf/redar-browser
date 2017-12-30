@@ -51,7 +51,7 @@ class DataTable extends React.Component<I.Props, I.State> {
     }
 
     parsed = parsed.map((row: any, i: number) => {
-      row._id = row._id || row.id || 'row-' + i
+      row._id = row._id || row.id || i
       return row
     })
 

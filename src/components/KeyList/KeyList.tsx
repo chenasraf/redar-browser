@@ -71,9 +71,16 @@ class KeyList extends React.Component<I.IProps, I.IState> {
   }
 
   private columnListFromRow(row: any) {
-    return ['_id'].concat(Object.keys(row).filter((k: string) => (
-      k.toLowerCase() !== 'id' && k.toLowerCase() !== '_id'
-    )))
+    const keys = ['_id']
+    
+    Object.keys(row).sort().forEach(k => {
+      k = k.toLowerCase()
+      if (k !== '_id' && k !== 'id') {
+        keys.push(k)
+      }
+    })
+
+    return keys
   }
 
   private get keyListElements() {
