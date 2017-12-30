@@ -20,13 +20,13 @@ These steps must be run before developing/building the extension:
     ```
 
 ## Development
-Start developing with `yarn start` (aliased as `dev`.  
+Start developing with `yarn start` (aliased as `dev`).  
 This will build a webpack dev server for you to work on, with hot reload.
 
 ### Languages & Frameworks:
 - React / Flux
 - TypeScript (with TSLint)
-- PostCSS (with PostCSS `$variables`, and `& child` nesting)
+- PostCSS (with `$variables`, and `& child` nesting)
 
 ## Building Extension
 - Build the production version with `yarn build`.  
