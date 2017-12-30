@@ -2,6 +2,7 @@ import * as React from 'react'
 import * as css from './Header.css'
 import * as I from './Header.module'
 import AddressBar from 'components/AddressBar/AddressBar'
+import RequestTypeSelector from 'components/RequestTypeSelector/RequestTypeSelector'
 import SelectBox, { Option, styles as selectBoxStyle } from 'components/SelectBox/SelectBox'
 import Button from 'components/Button/Button'
 import axios, { AxiosResponse } from 'axios'
@@ -21,6 +22,13 @@ class Header extends React.Component<I.IProps, I.IState> {
       url: localStorage.lastUrl || '',
       method: localStorage.lastMethod || 'GET',
       requestPayload: localStorage.lastRequestPayload || '',
+      requestType: String,
+    }
+  }
+
+  public componentWillMount() {
+    if (this.state.url.length) {
+      this.go()
     }
   }
 
@@ -37,6 +45,12 @@ class Header extends React.Component<I.IProps, I.IState> {
   private changeRequestPayload(requestPayload: string) {
     this.setState({ requestPayload })
     localStorage.lastRequestPayload = requestPayload
+  }
+  
+  private changeRequestType(requestType: I.ReqTypeTransformer) {
+    console.debug('Request type changed!', requestType)
+    this.setState({ requestType })
+    localStorage.lastRequestType = requestType
   }
 
   private go() {
@@ -73,7 +87,7 @@ class Header extends React.Component<I.IProps, I.IState> {
   }
 
   private get requestPayload() {
-    return JSON.parse(this.state.requestPayload)
+    return this.state.requestType(this.state.requestPayload)
   }
   
   private getDataColumns(data?: any) {
@@ -101,14 +115,15 @@ class Header extends React.Component<I.IProps, I.IState> {
   render() {
     return (
       <div className={css.header}>
-        <div className={css.method}>
-          <SelectBox name="method"
-            className={selectBoxStyle.selectBox}
-            value={this.state.method}
-            options={this.httpMethods}
-            placeholder="METHOD"
-            onChange={(value: Option<string>) => this.changeMethod(value.value!)}
-          />
+        <div className={css.nav}>
+          <div className={css.method}>
+            <SelectBox name="method"
+              className={selectBoxStyle.selectBox}
+              value={this.state.method}
+              options={this.httpMethods}
+              placeholder="METHOD"
+              onChange={(value: Option<string>) => this.changeMethod(value.value!)}
+              />
           </div>
           <div className={css.address}>
             <AddressBar url={this.state.url}
@@ -117,11 +132,18 @@ class Header extends React.Component<I.IProps, I.IState> {
           <div className={css.go}>
             <Button onClick={() => this.go()}>Go</Button>
           </div>
+        </div>
+        <div className={css.requestDataContainer}>
+          <div className={css.payloadType}>
+            <RequestTypeSelector
+              onChange={(transformer: I.ReqTypeTransformer) => this.changeRequestType(transformer)} />
+          </div>
           <div className={css.payload}>
             <textarea name="requestPayload"
               value={this.state.requestPayload}
               onChange={(e) => this.changeRequestPayload(e.target.value)} />
           </div>
+        </div>
       </div>
     )
   }

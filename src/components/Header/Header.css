@@ -1,14 +1,18 @@
 .header {
-  display: grid;
   grid-area: browse;
-  grid-template-columns: [method] 100px [address] 10fr [go] 70px;
-  grid-template-areas: 
-    "method address go"
-    "payload payload payload"
-  ;
   padding: 10px;
   border-bottom: 1px solid #ccc;
   background-image: linear-gradient(to bottom, white, #f3f3f3 88%, #eee);
+}
+
+.nav {
+  display: grid;
+  grid-template-columns: [method] 100px [address] 10fr [go] 70px;
+}
+
+.request-data-container {
+  display: grid;
+  grid-template-columns: [type] 20% [payload] 80%;
 }
 
 .method {
@@ -34,6 +38,10 @@
     border: 1px solid #ccc;
     margin-top: 7px;
   }
+}
+
+.payload-type {
+  grid-area: type;
 }
 
 .go {

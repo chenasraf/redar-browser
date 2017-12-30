@@ -38,25 +38,42 @@ class KeyList extends React.Component<I.IProps, I.IState> {
   }
 
   private keyListFromObject(data: any) {
-    return Object.keys(data)
+    return [''].concat(Object.keys(data))
   }
 
   private selectItem(key: string) {
-    const tableData = this.props.store.get('fullData', {})[key]
-    
-    if (tableData && tableData.constructor !== Array) {
-      return
-    }
+    const body = this.props.store.get('fullData', {})
+    const tableData = body[key]
 
-    const firstRow = tableData.length ? tableData[0] : {}
-    const columns = ['_id'].concat(Object.keys(firstRow).filter((k: string) => (
-      k.toLowerCase() !== 'id' && k.toLowerCase() !== '_id')
-    ))
+    this.setState({ viewKey: key }, () => {
+      if (!key.length) {
+        console.debug('entire response', [body])
+        dispatch(ActionTypes.set, {
+          tableData: [body],
+          columns: this.columnListFromRow(body),
+        })
 
-    dispatch(ActionTypes.set, {
-      tableData,
-      columns
+        return
+      }
+
+      if (tableData.constructor !== Array) {
+        return
+      }
+
+      const firstRow = tableData.length ? tableData[0] : {}
+      const columns = this.columnListFromRow(firstRow)
+
+      dispatch(ActionTypes.set, {
+        tableData,
+        columns
+      })
     })
+  }
+
+  private columnListFromRow(row: any) {
+    return ['_id'].concat(Object.keys(row).filter((k: string) => (
+      k.toLowerCase() !== 'id' && k.toLowerCase() !== '_id'
+    )))
   }
 
   private get keyListElements() {
@@ -65,7 +82,7 @@ class KeyList extends React.Component<I.IProps, I.IState> {
     return this.state.keyList.map((key: string) => {
       const className = [
         css.item,
-        fullData[key] && fullData[key].constructor === Array ? css.valid : '',
+        key === '' || (fullData[key] && fullData[key].constructor === Array) ? css.valid : '',
         this.state.viewKey === key ? css.selected : ''
       ].join(' ')
 
@@ -73,7 +90,7 @@ class KeyList extends React.Component<I.IProps, I.IState> {
         <div className={className}
           key={key}
           onClick={(e) => this.selectItem(key)}>
-          {key}
+          {key === '' ? '[Response]' : key}
         </div>
       )
     })

@@ -18,6 +18,7 @@ class DataTable extends React.Component<I.Props, I.State> {
 
   public componentWillMount() {
     this.listener = register(ActionTypes.set, (data: any) => {
+      console.debug('tableData incoming', data.tableData, data.columns)
       this.updateData({
         data: data.tableData || [],
         columns: data.columns || [],
