@@ -1,8 +1,7 @@
 @import "../../_variables.css";
 
 .RequestTypeSelector {
-  grid-area: sidebar;
-  border-right: 1px solid #bbb;
+  grid-area: type;
 }
 
 .item {

@@ -1,33 +1,38 @@
 import * as React from 'react'
 import * as I from './DataTable.module'
 import * as css from './DataTable.css'
-import Dispatcher, { register, dispatch, ActionTypes } from 'common/Dispatcher'
+import Dispatcher, { register, dispatch, ActionTypes, StoreKeys } from 'common/Dispatcher'
 
 class DataTable extends React.Component<I.Props, I.State> {
   private columns: string[]
-  private listener: string
+  private listeners: string[]
 
   constructor(props: I.Props) {
     super(props)
 
     this.state = {
-      columns: props.store.get('columns', []),
-      data: props.store.get('tableData', []),
+      columns: props.store.get(StoreKeys.Columns, []),
+      data: props.store.get(StoreKeys.Table, []),
     }
   }
 
   public componentWillMount() {
-    this.listener = register(ActionTypes.set, (data: any) => {
-      console.debug('tableData incoming', data.tableData, data.columns)
-      this.updateData({
-        data: data.tableData || [],
-        columns: data.columns || [],
+    this.listeners = [
+      register(ActionTypes.UPDATE_COLUMNS, (columns: any) => {
+        this.setState({
+          columns: columns || []
+        })
+      }),
+      register(ActionTypes.UPDATE_TABLE, (table: any) => {
+        this.setState({
+          data: this.parseData(table || [])
+        })
       })
-    })
+    ]
   }
 
   public componentWillUnmount() {
-    Dispatcher.unregister(this.listener)
+    this.listeners.forEach(l => Dispatcher.unregister(l))
   }
 
   private updateData(data: any) {
@@ -45,8 +50,8 @@ class DataTable extends React.Component<I.Props, I.State> {
       return []
     }
 
-    parsed = parsed.map(row => {
-      row._id = row._id || row.id || 'row-' + parseInt((Math.random() * 10000).toString(), 10)
+    parsed = parsed.map((row: any, i: number) => {
+      row._id = row._id || row.id || 'row-' + i
       return row
     })
 

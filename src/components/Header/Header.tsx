@@ -6,9 +6,11 @@ import RequestTypeSelector from 'components/RequestTypeSelector/RequestTypeSelec
 import SelectBox, { Option, styles as selectBoxStyle } from 'components/SelectBox/SelectBox'
 import Button from 'components/Button/Button'
 import axios, { AxiosResponse } from 'axios'
-import { dispatch, ActionTypes } from 'common/Dispatcher'
+import { dispatch, register, ActionTypes, StoreKeys } from 'common/Dispatcher'
 
 class Header extends React.Component<I.IProps, I.IState> {
+  private listeners: string[]
+  
   private httpMethods = [
     { label: 'GET', value: 'GET' },
     { label: 'POST', value: 'POST' },
@@ -16,13 +18,18 @@ class Header extends React.Component<I.IProps, I.IState> {
     { label: 'DELETE', value: 'DELETE' },
   ] as Array<Option<string>>
 
+  private requestTypeMap = {
+    JSON: JSON.parse,
+    Form: String
+  }
+
   constructor(props: I.IProps) {
     super(props)
     this.state = {
       url: localStorage.lastUrl || '',
       method: localStorage.lastMethod || 'GET',
       requestPayload: localStorage.lastRequestPayload || '',
-      requestType: String,
+      requestType: props.store.get(StoreKeys.RequestType, 'JSON'),
     }
   }
 
@@ -30,6 +37,12 @@ class Header extends React.Component<I.IProps, I.IState> {
     if (this.state.url.length) {
       this.go()
     }
+
+    this.listeners = [
+      register(ActionTypes.UPDATE_REQ_TYPE, (requestType: string) => {
+        this.setState({ requestType })
+      })
+    ]
   }
 
   private changeURL(url: string) {
@@ -46,12 +59,6 @@ class Header extends React.Component<I.IProps, I.IState> {
     this.setState({ requestPayload })
     localStorage.lastRequestPayload = requestPayload
   }
-  
-  private changeRequestType(requestType: I.ReqTypeTransformer) {
-    console.debug('Request type changed!', requestType)
-    this.setState({ requestType })
-    localStorage.lastRequestType = requestType
-  }
 
   private go() {
     const { method, url: url } = this.state
@@ -59,35 +66,28 @@ class Header extends React.Component<I.IProps, I.IState> {
     axios.request({ method, url, data: this.requestPayload })
       .then((response: AxiosResponse) => {
         const { data } = response
-        let viewKey = this.props.store.get('viewKey', null)
+        let viewKey = this.props.store.get(StoreKeys.ViewKey, null)
         let tableData
         
         if (viewKey && data.hasOwnProperty(viewKey)) {
           tableData = data[viewKey]
         } else {
-          for (const k in data) {
-            if (data.hasOwnProperty(k) && data[k] && data[k].constructor === Array) {
-              viewKey = k
-              tableData = data[k]
-            }
-          }
+          viewKey = ''
         }
 
-        if (!tableData) {
+        if (viewKey === '' || !tableData) {
           tableData = [data]
         }
 
-        dispatch(ActionTypes.set, {
-          fullData: data,
-          viewKey,
-          tableData,
-          columns: this.getDataColumns(tableData)
-        })
+        dispatch(ActionTypes.UPDATE_RESPONSE, data)
+        dispatch(ActionTypes.UPDATE_VIEWKEY, viewKey)
+        dispatch(ActionTypes.UPDATE_TABLE, tableData)
+        dispatch(ActionTypes.UPDATE_COLUMNS, this.getDataColumns(tableData))
       })
   }
 
   private get requestPayload() {
-    return this.state.requestType(this.state.requestPayload)
+    return this.requestTypeMap[this.state.requestType](this.state.requestPayload)
   }
   
   private getDataColumns(data?: any) {
@@ -134,10 +134,7 @@ class Header extends React.Component<I.IProps, I.IState> {
           </div>
         </div>
         <div className={css.requestDataContainer}>
-          <div className={css.payloadType}>
-            <RequestTypeSelector
-              onChange={(transformer: I.ReqTypeTransformer) => this.changeRequestType(transformer)} />
-          </div>
+          <RequestTypeSelector {...this.props} />
           <div className={css.payload}>
             <textarea name="requestPayload"
               value={this.state.requestPayload}

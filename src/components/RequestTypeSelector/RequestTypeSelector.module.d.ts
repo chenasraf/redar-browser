@@ -1,5 +1,5 @@
 export interface IProps {
-  onChange: (transformer: Function) => void
+  store: any
 }
 
 export interface IState {

@@ -6,7 +6,7 @@ export interface IState {
   url: string
   method: string
   requestPayload: string
-  requestType: (str: string) => string
+  requestType: string
 }
 
 export type ReqTypeTransformer = (str: string) => string

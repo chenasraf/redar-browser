@@ -5,68 +5,68 @@ import AddressBar from 'components/AddressBar/AddressBar'
 import SelectBox, { Option, styles as selectBoxStyle } from 'components/SelectBox/SelectBox'
 import Button from 'components/Button/Button'
 import axios, { AxiosResponse } from 'axios'
-import Dispatcher, { register, dispatch, ActionTypes } from 'common/Dispatcher'
+import Dispatcher, { register, dispatch, ActionTypes, StoreKeys } from 'common/Dispatcher'
 
 class KeyList extends React.Component<I.IProps, I.IState> {
-  private listener: string
+  private listeners: string[]
 
   constructor(props: I.IProps) {
     super(props)
     this.state = {
-      keyList: this.keyListFromObject(props.store.get('fullData', {})),
-      viewKey: props.store.get('viewKey', null)
+      keyList: this.keyListFromObject(props.store.get(StoreKeys.Response, {})),
+      viewKey: props.store.get(StoreKeys.ViewKey, '')
     }
   }
 
   public componentWillMount() {
-    this.listener = register(ActionTypes.set, (data: any) => {
-      if (data.hasOwnProperty('fullData')) {
+    this.listeners = [
+      register(ActionTypes.UPDATE_RESPONSE, (data: any) => {
         this.setState({
-          keyList: this.keyListFromObject(data.fullData || {})
+          keyList: this.keyListFromObject(data || {}),
+          viewKey: this.getViewKey(data || {}),
         })
-      }
-      if (data.hasOwnProperty('viewKey')) {
+      }),
+        
+      register(ActionTypes.UPDATE_VIEWKEY, (data: any) => {
         this.setState({
-          viewKey: data.viewKey
+          viewKey: data
         })
-      }
-    })
+      })
+    ]
   }
   
   public componentWillUnmount() {
-    Dispatcher.unregister(this.listener)
+    this.listeners.forEach(l => Dispatcher.unregister(l))
   }
 
   private keyListFromObject(data: any) {
     return [''].concat(Object.keys(data))
   }
 
+  private getViewKey(data: any) {
+    let viewKey = this.state.viewKey
+    
+    if (viewKey && data.hasOwnProperty(viewKey)) {
+      return viewKey
+    }
+
+    for (const k in data) {
+      if (data.hasOwnProperty(k) && data[k] && data[k].constructor === Array) {
+        return k
+      }
+    }
+
+    return ''
+  }
+
   private selectItem(key: string) {
-    const body = this.props.store.get('fullData', {})
-    const tableData = body[key]
+    const body = this.props.store.get(StoreKeys.Response, {})
+    const tableData = key !== '' ? body[key] : [body]
 
     this.setState({ viewKey: key }, () => {
-      if (!key.length) {
-        console.debug('entire response', [body])
-        dispatch(ActionTypes.set, {
-          tableData: [body],
-          columns: this.columnListFromRow(body),
-        })
-
-        return
-      }
-
-      if (tableData.constructor !== Array) {
-        return
-      }
-
-      const firstRow = tableData.length ? tableData[0] : {}
-      const columns = this.columnListFromRow(firstRow)
-
-      dispatch(ActionTypes.set, {
-        tableData,
-        columns
-      })
+      dispatch(ActionTypes.UPDATE_VIEWKEY, key)
+      dispatch(ActionTypes.UPDATE_TABLE, tableData)
+      dispatch(ActionTypes.UPDATE_COLUMNS, this.columnListFromRow(tableData && tableData.length ? tableData[0] : []))
     })
   }
 
@@ -77,7 +77,7 @@ class KeyList extends React.Component<I.IProps, I.IState> {
   }
 
   private get keyListElements() {
-    const fullData = this.props.store.get('fullData', {})
+    const fullData = this.props.store.get(StoreKeys.Response, {})
 
     return this.state.keyList.map((key: string) => {
       const className = [

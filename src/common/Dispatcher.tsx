@@ -3,7 +3,19 @@ import { ReduceStore } from 'flux/utils'
 import * as Immutable from 'immutable'
 
 const ActionTypes = {
-  set: 'set-data',
+  UPDATE_RESPONSE: 'UPDATE_RESPONSE',
+  UPDATE_TABLE: 'UPDATE_TABLE',
+  UPDATE_COLUMNS: 'UPDATE_COLUMNS',
+  UPDATE_VIEWKEY: 'UPDATE_VIEWKEY',
+  UPDATE_REQ_TYPE: 'UPDATE_REQ_TYPE',
+}
+
+const StoreKeys = {
+  Response: 'RESPONSE',
+  Table: 'TABLE',
+  Columns: 'COLUMNS',
+  ViewKey: 'VIEWKEY',
+  RequestType: 'REQ_TYPE'
 }
 
 export interface Action<T = any> {
@@ -30,19 +42,14 @@ class AppStore extends ReduceStore<TState, Action> {
 
   reduce(state: TState, action: Action) {
     switch (action.name) {
-      case ActionTypes.set:
-        if (action.payload.constructor === Array && action.payload.length === 2) {
-          return state.set(action.payload[0], action.payload[1])
-        }
-
-        const keys = Object.keys(action.payload)
-        let reduced = state.toOrderedMap()
-
-        for (const k of keys) {
-          reduced = reduced.set(k, action.payload[k])
-        }
-
-        return reduced
+      case ActionTypes.UPDATE_COLUMNS:
+        return state.set(StoreKeys.Columns, action.payload)
+      case ActionTypes.UPDATE_TABLE:
+        return state.set(StoreKeys.Table, action.payload)
+      case ActionTypes.UPDATE_RESPONSE:
+        return state.set(StoreKeys.Response, action.payload)
+      case ActionTypes.UPDATE_VIEWKEY:
+        return state.set(StoreKeys.ViewKey, action.payload)
       default:
         return state
     }
@@ -58,6 +65,7 @@ export function dispatch(name: string, payload: any) {
 export function register(name: string, callback: (payload: any) => void): string {
   return AppDispatcher.register((payload: Action) => {
     if (payload.name === name) {
+      console.debug('Dispatching:', payload.name, payload.payload)
       callback(payload.payload)
     }
   })
@@ -65,4 +73,4 @@ export function register(name: string, callback: (payload: any) => void): string
 
 const Store = new AppStore()
 export default AppDispatcher
-export { Store, ActionTypes }
+export { Store, ActionTypes, StoreKeys }
