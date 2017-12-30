@@ -19,7 +19,7 @@ class AddressBar extends React.Component<I.IProps, I.IState> {
   }
 
   public componentWillReceiveProps(nextProps: I.IProps) {
-    if (nextProps.url && nextProps.url !== this.props.url) {
+    if (nextProps.url != null && nextProps.url !== this.props.url) {
       this.setState({ url: nextProps.url })
     }
   }

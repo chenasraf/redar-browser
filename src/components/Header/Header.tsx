@@ -87,6 +87,10 @@ class Header extends React.Component<I.IProps, I.IState> {
   }
 
   private get requestPayload() {
+    if (!this.state.requestType || !this.requestTypeMap.hasOwnProperty(this.state.requestType)) {
+      return undefined
+    }
+
     return this.requestTypeMap[this.state.requestType](this.state.requestPayload)
   }
   
@@ -138,6 +142,7 @@ class Header extends React.Component<I.IProps, I.IState> {
           <div className={css.payload}>
             <textarea name="requestPayload"
               value={this.state.requestPayload}
+              placeholder="Request Payload"
               onChange={(e) => this.changeRequestPayload(e.target.value)} />
           </div>
         </div>
