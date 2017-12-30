@@ -35,3 +35,7 @@ yarn-error.log*
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Any extension export files
+*.zip
+*.crx

@@ -111,8 +111,5 @@
   },
   "eslintConfig": {
     "extends": "react-app"
-  },
-  "devDependencies": {
-    "assemble": "^0.24.3"
   }
 }

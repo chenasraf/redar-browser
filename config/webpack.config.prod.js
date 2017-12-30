@@ -8,6 +8,7 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const ManifestPlugin = require('webpack-manifest-plugin');
 const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const TemplateReplacer = require('./templateReplacer.js');
 const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin');
 const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
 const paths = require('./paths');
@@ -349,7 +350,14 @@ module.exports = {
 
     // Manifest for Chrome Extension
     new CopyWebpackPlugin([
-      { from: './public/manifest.json', to: './static/manifest.json' },
+      {
+        from: './public/manifest.json',
+        to: './manifest.json',
+        transform: (content, _path) => {
+          console.log(content)
+          return TemplateReplacer(content)
+        }
+      },
     ])
   ],
   // Some libraries import Node modules but don't use them in the browser.
