@@ -1,6 +1,7 @@
 const SimpleScaffold = require('simple-scaffold').default
+const path = require('path')
 
 new SimpleScaffold({
-  templates: [ __dirname + '/../scaffold/component' ],
+  templates: [ path.join(__dirname, '/../scaffold/component/**/*') ],
   output: __dirname + '/../src/components'
 }).run()
