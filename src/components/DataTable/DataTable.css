@@ -2,13 +2,15 @@
   width: 100%;
   grid-area: main;
   padding: 5px;
+  border-spacing: 2px;
+  border-collapse: separate;
 
   & thead th {
     background: #acf;
   }
 
   & tbody td, & thead th {
-    padding:  7px 12px;
+    padding:  12px;
   }
 }
 

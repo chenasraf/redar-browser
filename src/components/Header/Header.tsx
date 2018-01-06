@@ -30,6 +30,7 @@ class Header extends React.Component<I.IProps, I.IState> {
       method: localStorage.lastMethod || 'GET',
       requestPayload: localStorage.lastRequestPayload || '',
       requestType: props.store.get(StoreKeys.RequestType, 'JSON'),
+      headers: localStorage.lastHeaders || '',
     }
   }
 
@@ -60,10 +61,27 @@ class Header extends React.Component<I.IProps, I.IState> {
     localStorage.lastRequestPayload = requestPayload
   }
 
+  private changeHeaders(headers: string) {
+    this.setState({ headers })
+    localStorage.lastHeaders = headers
+  }
+
+  private get requestHeaders() {
+    const headers = this.state.headers.split(`\n`).reduce((accu, cur) => {
+      const [key, val] = cur.split(':').map(s => s.trim())
+      if (key.length) {
+        accu[key] = val
+      }
+      return accu
+    }, {})
+
+    return headers
+  }
+
   private go() {
     const { method, url: url } = this.state
 
-    axios.request({ method, url, data: this.requestPayload })
+    axios.request({ method, url, data: this.requestPayload, headers: this.requestHeaders })
       .then((response: AxiosResponse) => {
         const { data } = response
         let viewKey = this.props.store.get(StoreKeys.ViewKey, null)
@@ -140,10 +158,18 @@ class Header extends React.Component<I.IProps, I.IState> {
         <div className={css.requestDataContainer}>
           <RequestTypeSelector {...this.props} />
           <div className={css.payload}>
+            <h4 className={css.title}>Payload</h4>
             <textarea name="requestPayload"
               value={this.state.requestPayload}
               placeholder="Request Payload"
               onChange={(e) => this.changeRequestPayload(e.target.value)} />
+          </div>
+          <div className={css.headers}>
+            <h4 className={css.title}>Headers</h4>
+            <textarea name="headers"
+              value={this.state.headers}
+              placeholder="Headers"
+              onChange={(e) => this.changeHeaders(e.target.value)} />
           </div>
         </div>
       </div>

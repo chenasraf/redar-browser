@@ -1,9 +1,9 @@
-# JSON Redar
+# Redar Browser
 
-JSON Redar is a Chrome extension designed to make your JSON requests a lot simpler and easier to handle.  
+Redar Browser is a Chrome extension designed to make your JSON requests a lot simpler and easier to handle.  
 If you ever got stuck looking at giant JSON arrays of objects trying to figure out relations between them, boy do we have the solution for you!
 
-JSON Redar lets you view your results as data tables which are sortable and filterable, letting you speedily read through the data to get what you want.
+Redar Browser lets you view your results as data tables which are sortable and filterable, letting you speedily read through the data to get what you want.
 
 ## How do I install?
 

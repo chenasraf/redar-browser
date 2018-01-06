@@ -271,8 +271,8 @@ module.exports = {
         from: './public/manifest.json',
         to: './manifest.json',
         transform: (content, _path) => {
-          console.log(content)
-          return TemplateReplacer(content)
+          const packagePath = path.join(__dirname, '..', 'package.json')
+          return TemplateReplacer(content, packagePath)
         }
       },
     ]),
