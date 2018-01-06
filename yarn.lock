@@ -5214,9 +5214,9 @@ signal-exit@^3.0.0, signal-exit@^3.0.2:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/signal-exit/-/signal-exit-3.0.2.tgz#b5fdc08f1287ea1178628e415e25132b73646c6d"
 
-simple-scaffold@^0.1.7:
-  version "0.1.7"
-  resolved "https://registry.yarnpkg.com/simple-scaffold/-/simple-scaffold-0.1.7.tgz#fc33717154d4c574e4df656e0387b710f85facf8"
+simple-scaffold@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/simple-scaffold/-/simple-scaffold-0.2.0.tgz#a9b6fc0904f98ca014a7c56e3674c4f93319fcad"
   dependencies:
     "@types/glob" "^5.0.34"
     "@types/handlebars" "^4.0.36"

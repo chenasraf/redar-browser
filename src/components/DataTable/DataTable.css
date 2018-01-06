@@ -1,6 +1,5 @@
 .DataTable {
   width: 100%;
-  grid-area: main;
   padding: 5px;
   border-spacing: 2px;
   border-collapse: separate;

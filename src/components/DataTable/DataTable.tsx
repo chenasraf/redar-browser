@@ -2,6 +2,7 @@ import * as React from 'react'
 import * as I from './DataTable.module'
 import * as css from './DataTable.css'
 import Dispatcher, { register, dispatch, ActionTypes, StoreKeys } from 'common/Dispatcher'
+import Cell from 'components/Cell/Cell'
 
 class DataTable extends React.Component<I.Props, I.State> {
   private columns: string[]
@@ -76,7 +77,7 @@ class DataTable extends React.Component<I.Props, I.State> {
       return (
         <td key={[col, i, j].join('_')}
           className={cls}>
-          {JSON.stringify(row[col], undefined, '  ')}
+          <Cell data={row[col]} />
         </td>
       )
     })
@@ -87,8 +88,13 @@ class DataTable extends React.Component<I.Props, I.State> {
       return <div className={css.dataTable}>No data to show!</div>
     }
 
+    const classNames = [
+      css.dataTable,
+      this.props.className || ''
+    ].join(' ')
+
     return (
-      <table className={css.dataTable}>
+      <table className={classNames}>
         <thead>
           <tr>
             {this.state.columns.map(col => <th key={col}>{col}</th>)}

@@ -1,5 +1,5 @@
 export interface IProps {
-  // props
+  data: any
 }
 
 export interface IState {

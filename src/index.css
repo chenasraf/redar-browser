@@ -3,6 +3,7 @@
 html, body {
   font-family: "Helvetica Neue", "Calibri", "Segoe UI", "Arial", sans-serif;
   font-size: 11pt;
+  overflow: hidden;
 }
 
 * {

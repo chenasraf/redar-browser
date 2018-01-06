@@ -39,8 +39,12 @@ class App extends React.Component<TProps> {
     return (
       <div className={css.App}>
         <Header {...this.props} />
-        <KeyList {...this.props} />
-        <DataTable {...this.props} />
+        <div className={css.content}>
+          <KeyList {...this.props} />
+          <div className={[css.scrollable, css.table].join(' ')}>
+            <DataTable {...this.props} />
+          </div>
+        </div>
       </div>
     )
   }

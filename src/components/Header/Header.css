@@ -1,23 +1,24 @@
 .header {
-  grid-area: browse;
   padding: 14px;
   align-content: center;
   border-bottom: 1px solid #ccc;
   background-image: linear-gradient(to bottom, white, #f3f3f3 88%, #eee);
   display: grid;
   grid-row-gap: 14px;
+  overflow: hidden;
 }
 
 .nav {
   display: grid;
-  grid-template-columns: [method] 100px [address] 10fr [go] 70px;
+  grid-template-columns: [method] 100px [address] auto [go] 70px;
+  width: calc(100% - 14px);
 }
 
 .request-data-container {
   display: grid;
   grid-template-columns: [type] 10% [payload] 40% [headers] 50%;
   grid-column-gap: 14px;
-  max-width: calc(100% - 28px);
+  width: calc(100% - 14px);
 
   & .title {
     text-transform: uppercase;
