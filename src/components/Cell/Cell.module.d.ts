@@ -1,7 +1,11 @@
 export interface IProps {
   data: any
+  depth?: number
+  className?: string
 }
 
 export interface IState {
-  // state
+  tableData: any
+  depth: number
+  dataVisible: boolean
 }

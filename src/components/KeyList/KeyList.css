@@ -1,7 +1,6 @@
 @import "../../_variables.css";
 
 .KeyList {
-  grid-area: sidebar;
   border-right: 1px solid #bbb;
 }
 

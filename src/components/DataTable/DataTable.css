@@ -10,6 +10,8 @@
 
   & tbody td, & thead th {
     padding:  12px;
+    width: max-content;
+    vertical-align: top;
   }
 }
 

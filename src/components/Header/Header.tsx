@@ -136,7 +136,7 @@ class Header extends React.Component<I.IProps, I.IState> {
 
   render() {
     return (
-      <div className={css.header}>
+      <div className={[css.header, this.props.className || ''].join(' ')}>
         <div className={css.nav}>
           <div className={css.method}>
             <SelectBox name="method"

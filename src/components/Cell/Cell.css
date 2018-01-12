@@ -3,3 +3,34 @@
 .Cell {
   /* */
 }
+
+
+.pre, .pre-alt {
+  overflow: hidden;
+  font-family: monospace;
+  max-width: 150px;
+  background: #ddd4;
+  margin: 4px 3px;
+  border: 1px solid #aaa;
+  padding: 4px;
+}
+
+.pre {
+  overflow-x: auto;
+  width: max-content;
+}
+
+.pre-alt {
+  display: inline-block;
+  vertical-align: top;
+  width: min-content;
+}
+
+.popover {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+

@@ -104,8 +104,12 @@ class KeyList extends React.Component<I.IProps, I.IState> {
   }
 
   render() {
+    const classNames = [
+      css.KeyList,
+      this.props.className || ''
+    ].join(' ')
     return (
-      <div className={css.KeyList}>
+      <div className={classNames}>
         {this.keyListElements}
       </div>
     )

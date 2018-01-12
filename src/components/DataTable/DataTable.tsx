@@ -13,11 +13,15 @@ class DataTable extends React.Component<I.Props, I.State> {
 
     this.state = {
       columns: props.store.get(StoreKeys.Columns, []),
-      data: props.store.get(StoreKeys.Table, []),
+      data: props.data || props.store.get(StoreKeys.Table, []),
     }
   }
 
   public componentWillMount() {
+    if (this.props.static) {
+      return
+    }
+
     this.listeners = [
       register(ActionTypes.UPDATE_COLUMNS, (columns: any) => {
         this.setState({
@@ -33,6 +37,10 @@ class DataTable extends React.Component<I.Props, I.State> {
   }
 
   public componentWillUnmount() {
+    if (this.props.static) {
+      return
+    }
+    
     this.listeners.forEach(l => Dispatcher.unregister(l))
   }
 
@@ -88,26 +96,23 @@ class DataTable extends React.Component<I.Props, I.State> {
       return <div className={css.dataTable}>No data to show!</div>
     }
 
-    const classNames = [
-      css.dataTable,
-      this.props.className || ''
-    ].join(' ')
-
     return (
-      <table className={classNames}>
-        <thead>
-          <tr>
-            {this.state.columns.map(col => <th key={col}>{col}</th>)}
-          </tr>
-        </thead>
-        <tbody>
-          {this.state.data.map((row, i) => (
-            <tr key={`row_${i}`}>
-              {this.getColumnRowData(row, i)}
+      <div className={this.props.className || ''}>
+        <table className={css.dataTable}>
+          <thead>
+            <tr>
+              {this.state.columns.map(col => <th key={col}>{col}</th>)}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {this.state.data.map((row, i) => (
+              <tr key={`row_${i}`}>
+                {this.getColumnRowData(row, i)}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     )
   }
 }

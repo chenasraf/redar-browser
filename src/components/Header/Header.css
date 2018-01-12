@@ -5,6 +5,8 @@
   background-image: linear-gradient(to bottom, white, #f3f3f3 88%, #eee);
   display: grid;
   grid-row-gap: 14px;
+  align-content: stretch;
+  grid-template-rows: min-content auto;
   overflow: hidden;
 }
 
