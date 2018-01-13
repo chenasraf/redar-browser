@@ -29,7 +29,7 @@ export function Any({children, className, preClassName, title, ...props}: ReprPr
 }
 
 function _JSON({children, className, preClassName, title, ...props}: ReprProps & AnyProps) {
-  if (children.constructor !== Array) {
+  if (!children || children.constructor !== Array) {
     children = [children]
   }
 

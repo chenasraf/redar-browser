@@ -16,13 +16,13 @@
 
 .pre {
   overflow-x: auto;
-  width: max-content;
+  width: 100%;
 }
 
 .pre-alt {
   display: inline-block;
   vertical-align: top;
-  width: min-content;
+  width: unset;
 }
 
 .popover {

@@ -18,10 +18,12 @@ class Cell extends React.Component<I.IProps, I.IState> {
 
   private isRepresentable(obj?: any) {
     return (
+      !obj ||
       obj.constructor === String ||
+      obj.constructor === Boolean ||
       typeof obj === 'undefined' ||
-      typeof obj === 'number' ||
-      !obj
+      typeof obj === 'boolean' ||
+      typeof obj === 'number'
     )
   }
 
