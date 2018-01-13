@@ -1,7 +1,8 @@
-@import "./reset.css";
+@import "_variables.css";
+@import "reset.css";
 
 html, body {
-  font-family: "Helvetica Neue", "Calibri", "Segoe UI", "Arial", sans-serif;
+  font-family: $font-family;
   font-size: 11pt;
 }
 

@@ -2,6 +2,7 @@ import * as React from 'react'
 import * as css from './Cell.css'
 import * as I from './Cell.module'
 import DataTable from 'components/DataTable/DataTable'
+import * as Repr from './Repr'
 
 const MAX_DEPTH = 5
 
@@ -30,7 +31,7 @@ class Cell extends React.Component<I.IProps, I.IState> {
 
   private parse() {
     const obj = this.props.data
-    const classNames = this.props.className || ''
+    const className = this.props.className || ''
 
     if (this.state.depth >= MAX_DEPTH) {
       return (
@@ -39,42 +40,53 @@ class Cell extends React.Component<I.IProps, I.IState> {
     }
 
     if (this.isRepresentable(obj)) {
-      let str = JSON.stringify(obj, null, '\t').split(`\\`).join('')
-      const maxLen = 400
-
-      if (str.length > maxLen) {
-        str = str.slice(0, maxLen) + '\u2026'
-      }
-
       return (
-        <div className={[classNames, css.pre].join(' ')}>{str}</div>
+        <Repr.JSON className={[className, css.pre, css.string].join(' ')}>
+          {obj}
+        </Repr.JSON>
       )
     }
     
     if (typeof obj === 'function') {
-      const name = obj.name || 'Function'
-      return `${name}()`
+      return (
+        <Repr.Function className={[className, css.func].join(' ')}>
+          {obj}
+        </Repr.Function>
+      )
     }
 
     if (obj.constructor === Array && (!obj.length || obj[0].constructor === {}.constructor)) {
       const items = obj.slice(0, 3)
+
       return (
-        <div className={[classNames, css.preAlt].join(' ')}>
-          Array[{items.map((item, i) => (
-            <Cell className={css.pre} depth={this.state.depth + 1} data={item} />
-          ))}]
-        </div>
+        <Repr.Any className={[className, css.preAlt].join(' ')}
+          title={'Array (' + obj.length + ')'}>
+          {items.map((item, i) => (
+            <Cell key={'item-' + i} className={[css.preAlt, css.any].join(' ')}
+              depth={this.state.depth + 1}
+              data={item} />
+          ))}
+        </Repr.Any>
       )
     }
 
-    const keyList = Object.keys(obj).map(s => (
-      <Cell depth={this.state.depth + 1} data={s} />
-    ))
+    const keys = Object.keys(obj)
 
-    return (
-      <div className={[classNames, css.preAlt].join(' ')} onClick={(e) => this.expandData()}>
-        Object({keyList})
-      </div>
+    return keys.length ? (
+      <Repr.Any className={[className, css.preAlt].join(' ')}
+        title={'Object (' + keys.length + ' keys)'}
+        onClick={(e) => this.expandData()}>
+        {keys.map((s, i) => (
+          <div key={'key-' + i}
+            className={[css.preAlt, css.string].join(' ')}>
+            <div>{s}:</div>
+            <Repr.JSON className={css.preAlt}>{obj[s]}</Repr.JSON>
+          </div>
+        ))}
+      </Repr.Any>
+    ) : (
+      <Repr.Any className={[className, css.preAlt].join(' ')}
+        title="Empty Object" />
     )
   }
 

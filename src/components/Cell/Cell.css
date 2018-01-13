@@ -4,8 +4,7 @@
   /* */
 }
 
-
-.pre, .pre-alt {
+.pre, .pre-alt, .obj-container {
   overflow: hidden;
   font-family: monospace;
   max-width: 150px;
@@ -34,3 +33,18 @@
   bottom: 0;
 }
 
+.func {
+  background: #fff;
+}
+
+.array {
+  background: #ffb;
+}
+
+.any {
+  background: #dfa
+}
+
+.string {
+  background: #f1d7ea;
+}

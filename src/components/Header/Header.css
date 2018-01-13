@@ -7,7 +7,6 @@
   grid-row-gap: 14px;
   align-content: stretch;
   grid-template-rows: min-content auto;
-  overflow: hidden;
 }
 
 .nav {
@@ -20,7 +19,7 @@
   display: grid;
   grid-template-columns: [type] 10% [payload] 40% [headers] 50%;
   grid-column-gap: 14px;
-  width: calc(100% - 14px);
+  width: calc(100% - 40px);
 
   & .title {
     text-transform: uppercase;
