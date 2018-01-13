@@ -10,11 +10,15 @@ class DataTable extends React.Component<I.Props, I.State> {
 
   constructor(props: I.Props) {
     super(props)
+    
+    const columns = props.store.get(StoreKeys.Columns, [])
 
     this.state = {
-      columns: props.store.get(StoreKeys.Columns, []),
+      columns,
       data: props.data || props.store.get(StoreKeys.Table, []),
       filters: {},
+      sortKey: columns[0],
+      sortDesc: false
     }
   }
 
@@ -25,8 +29,14 @@ class DataTable extends React.Component<I.Props, I.State> {
 
     this.listeners = [
       register(ActionTypes.UPDATE_COLUMNS, (columns: any) => {
+        let { sortKey } = this.state
+        if (columns.indexOf(sortKey) === -1) {
+          sortKey = columns[0]
+        }
+
         this.setState({
-          columns: columns || []
+          columns: columns || [],
+          sortKey,
         })
       }),
       register(ActionTypes.UPDATE_TABLE, (table: any) => {
@@ -100,8 +110,9 @@ class DataTable extends React.Component<I.Props, I.State> {
     })
   }
 
-  private filterData(filters: I.Filters) {
-    let { data } = this.state
+  private filterAndSortData() {
+    let { data, filters } = this.state
+
     for (const key in filters) {
       if (filters.hasOwnProperty(key) && filters[key] && filters[key]!.length) {
         data = data.filter((value: any) => {
@@ -109,7 +120,19 @@ class DataTable extends React.Component<I.Props, I.State> {
         })
       }
     }
+
+    const skey = this.state.sortKey
+    const cmp = (a, b) => a > b ? 1 : a === b ? 0 : -1
+    const sort = (a, b) => !skey ? 1 : this.state.sortDesc ? cmp(b[skey], a[skey]) : cmp(a[skey], b[skey])
+    data = data.sort(sort)
+
     return data
+  }
+
+  private sortBy(key: string) {
+    const { sortKey, sortDesc } = this.state
+    const desc = sortKey === key && !sortDesc
+    this.setState({ sortKey: key, sortDesc: desc })
   }
 
   private compareFilter(obj: any, filter: string) {
@@ -123,11 +146,30 @@ class DataTable extends React.Component<I.Props, I.State> {
           <thead>
             <tr>
               {this.state.columns.map(col => {
+                const anchorCls = [
+                  css.colName,
+                  this.state.sortKey === col ? css.sortingBy : ''
+                ].join(' ')
+
+                const caretCls = [
+                  css.sortCaret,
+                  'material-icons'
+                ].join(' ')
+
                 return (
                   <th key={col}>
-                    {col}
+                    <a href="#"
+                      onClick={(e) => { e.preventDefault(); this.sortBy(col) }}
+                      className={anchorCls}>
+                      {col}
+                      <span className={caretCls}>
+                        {this.state.sortKey === col && this.state.sortDesc ?
+                          'keyboard_arrow_down' : 'keyboard_arrow_up'}
+                      </span>
+                    </a>
                     <div>
                       <input type="text"
+                        className={css.filterInput}
                         value={this.state.filters[col] || ''}
                         placeholder={`filter "${col}"`}
                         onChange={(e) => {
@@ -142,7 +184,7 @@ class DataTable extends React.Component<I.Props, I.State> {
             </tr>
           </thead>
           <tbody>
-            {this.filterData(this.state.filters).map((row, i) => (
+            {this.filterAndSortData().map((row, i) => (
               <tr key={`row_${i}`}>
                 {this.getColumnRowData(row, i)}
               </tr>

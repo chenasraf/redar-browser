@@ -13,4 +13,6 @@ export interface State {
   columns: string[]
   data: any[]
   filters: Filters
+  sortKey: string
+  sortDesc: boolean
 }

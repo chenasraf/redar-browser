@@ -8,11 +8,26 @@
 
   & thead th {
     background: #acf;
+    padding:  4px;
+  }
+
+  & tbody td {
+    padding: 12px;
+  }
+
+  & tr:nth-child(even) td {
+    background: #eee;
+
+    &.col-id {
+      background: #ddd;
+    }
+  }
+
+  & tbody tr:not(:last-child) td, & thead th {
+    border-bottom: 1px solid #aaa;
   }
 
   & tbody td, & thead th {
-    padding:  12px;
-    width: max-content;
     vertical-align: top;
 
     & label {
@@ -31,7 +46,33 @@
 
 }
 
+.col-name {
+  color: $text-main;
+  text-decoration: none;
+  display: inline-block;
+  margin-bottom: 5px;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  &.sorting-by {
+    font-weight: bold;
+  }
+}
+
+.filter-input {
+  width: 100%;
+  border: 1px solid #ccc;
+  min-width: 80px;
+  padding: 7px 4px;
+}
+
+.sort-caret {
+  vertical-align: middle;
+  font-size: 1.3em;
+}
+
 .col-id {
-  width: 0.1vw;
   background: #eee;
 }
