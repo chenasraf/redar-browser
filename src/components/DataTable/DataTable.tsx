@@ -14,6 +14,7 @@ class DataTable extends React.Component<I.Props, I.State> {
     this.state = {
       columns: props.store.get(StoreKeys.Columns, []),
       data: props.data || props.store.get(StoreKeys.Table, []),
+      filters: {},
     }
   }
 
@@ -89,23 +90,60 @@ class DataTable extends React.Component<I.Props, I.State> {
         </td>
       )
     })
-  } 
+  }
+
+  private setFilter(key: string, value: string) {
+    this.setState((cur: I.State) => {
+      const filters = cur.filters
+      filters[key] = value
+      return { filters }
+    })
+  }
+
+  private filterData(filters: I.Filters) {
+    let { data } = this.state
+    for (const key in filters) {
+      if (filters.hasOwnProperty(key) && filters[key] && filters[key]!.length) {
+        data = data.filter((value: any) => {
+          return this.compareFilter(value[key], filters[key]!)
+        })
+      }
+    }
+    return data
+  }
+
+  private compareFilter(obj: any, filter: string) {
+    console.debug('Comparing', String(obj), 'to', filter)
+    return String(obj).toLowerCase().indexOf(filter.toLowerCase()) > -1
+  }
 
   public render() {
-    if (!this.state.data.length) {
-      return <div className={css.dataTable}>No data to show!</div>
-    }
-
     return (
       <div className={this.props.className || ''}>
         <table className={css.dataTable}>
           <thead>
             <tr>
-              {this.state.columns.map(col => <th key={col}>{col}</th>)}
+              {this.state.columns.map(col => {
+                return (
+                  <th key={col}>
+                    {col}
+                    <div>
+                      <input type="text"
+                        value={this.state.filters[col] || ''}
+                        placeholder={`filter "${col}"`}
+                        onChange={(e) => {
+                          const { value } = e.target
+                          this.setFilter(col, value)
+                        }}
+                      />
+                    </div>
+                  </th>
+                )
+              })}
             </tr>
           </thead>
           <tbody>
-            {this.state.data.map((row, i) => (
+            {this.filterData(this.state.filters).map((row, i) => (
               <tr key={`row_${i}`}>
                 {this.getColumnRowData(row, i)}
               </tr>
