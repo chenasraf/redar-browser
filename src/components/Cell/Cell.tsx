@@ -48,23 +48,15 @@ class Cell extends React.Component<I.IProps, I.IState> {
         </Repr.JSON>
       )
     }
-    
-    if (typeof obj === 'function') {
-      return (
-        <Repr.Function className={[className, css.func].join(' ')}>
-          {obj}
-        </Repr.Function>
-      )
-    }
 
     if (obj.constructor === Array && (!obj.length || obj[0].constructor === {}.constructor)) {
       const items = obj.slice(0, 3)
 
       return (
-        <Repr.Any className={[className, css.preAlt].join(' ')}
+        <Repr.Any className={[className, css.preAlt, css.array].join(' ')}
           title={'Array (' + obj.length + ')'}>
           {items.map((item, i) => (
-            <Cell key={'item-' + i} className={[css.preAlt, css.any].join(' ')}
+            <Cell key={'item-' + i} className={[css.objContainer].join(' ')}
               depth={this.state.depth + 1}
               data={item} />
           ))}
@@ -79,11 +71,10 @@ class Cell extends React.Component<I.IProps, I.IState> {
         title={'Object (' + keys.length + ' keys)'}
         onClick={(e) => this.expandData()}>
         {keys.map((s, i) => (
-          <div key={'key-' + i}
+          <Repr.Any key={'key-' + i}
             className={[css.preAlt, css.string].join(' ')}>
-            <div>{s}:</div>
-            <Repr.JSON className={css.preAlt}>{obj[s]}</Repr.JSON>
-          </div>
+            {s}: {JSON.stringify(obj[s])}
+          </Repr.Any>
         ))}
       </Repr.Any>
     ) : (

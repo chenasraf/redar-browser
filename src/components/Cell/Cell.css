@@ -8,7 +8,7 @@
   overflow: hidden;
   font-family: monospace;
   max-width: 150px;
-  background: #ddd4;
+  background: #eee;
   margin: 4px 3px;
   border: 1px solid #aaa;
   padding: 4px;
@@ -33,18 +33,14 @@
   bottom: 0;
 }
 
-.func {
-  background: #fff;
-}
-
 .array {
   background: #ffb;
 }
 
 .any {
-  background: #dfa
+  background: #f1d7ea;
 }
 
 .string {
-  background: #f1d7ea;
+  background: #dfa
 }

@@ -12,11 +12,6 @@ interface AnyProps {
   title?: string
 }
 
-export function Function({children, className, preClassName, ...props}: ReprProps) {
-  const name = children.name || 'Function'
-  return <span className={[preClassName, className].join(' ')} {...props}>{name}()</span>
-}
-
 export function Any({children, className, preClassName, title, ...props}: ReprProps & AnyProps) {
   return (
     <div className={className} {...props}>

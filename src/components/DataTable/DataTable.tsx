@@ -113,7 +113,6 @@ class DataTable extends React.Component<I.Props, I.State> {
   }
 
   private compareFilter(obj: any, filter: string) {
-    console.debug('Comparing', String(obj), 'to', filter)
     return String(obj).toLowerCase().indexOf(filter.toLowerCase()) > -1
   }
 
