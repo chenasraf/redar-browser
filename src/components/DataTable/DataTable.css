@@ -8,11 +8,12 @@
 
   & thead th {
     background: #acf;
-    padding:  4px;
+    padding: 4px;
   }
 
   & tbody td {
-    padding: 12px;
+    padding: 4px;
+    padding-right: 8px;
   }
 
   & tr:nth-child(even) td {
@@ -43,7 +44,7 @@
 }
 
 .col-unknown {
-
+  min-width: 80px;
 }
 
 .col-name {
@@ -74,5 +75,6 @@
 }
 
 .col-id {
+  min-width: 60px;
   background: #eee;
 }

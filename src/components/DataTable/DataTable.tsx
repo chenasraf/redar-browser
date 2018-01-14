@@ -7,6 +7,16 @@ import Cell from 'components/Cell/Cell'
 class DataTable extends React.Component<I.Props, I.State> {
   private columns: string[]
   private listeners: string[]
+  private filterFuncs: { [open: string]: I.FilterFunc } = {
+      '>': (a, b) => parseFloat(a) > parseFloat(b),
+      '>=': (a, b) => parseFloat(a) >= parseFloat(b),
+      '<': (a, b) => parseFloat(a) < parseFloat(b),
+      '<=': (a, b) => parseFloat(a) <= parseFloat(b),
+      '=': (a, b) => JSON.stringify(a) === JSON.stringify(b),
+
+      // default: contains
+      '_': (a, b) => String(a).toLowerCase().indexOf(String(b).toLowerCase()) > -1
+  }
 
   constructor(props: I.Props) {
     super(props)
@@ -39,6 +49,7 @@ class DataTable extends React.Component<I.Props, I.State> {
           sortKey,
         })
       }),
+      
       register(ActionTypes.UPDATE_TABLE, (table: any) => {
         this.setState({
           data: this.parseData(table || [])
@@ -118,6 +129,10 @@ class DataTable extends React.Component<I.Props, I.State> {
         data = data.filter((value: any) => {
           return this.compareFilter(value[key], filters[key]!)
         })
+
+        if (data.length === 0) {
+          break
+        }
       }
     }
 
@@ -135,8 +150,10 @@ class DataTable extends React.Component<I.Props, I.State> {
     this.setState({ sortKey: key, sortDesc: desc })
   }
 
-  private compareFilter(obj: any, filter: string) {
-    return String(obj).toLowerCase().indexOf(filter.toLowerCase()) > -1
+  private compareFilter(itemValue: any, filterStr: string) {
+    const [ filterOper, filterValue ] = filterStr.split(/\b/).map(s => String(s).trim())
+    const filterKey = this.filterFuncs.hasOwnProperty(filterOper) ? filterOper : '_' // default: contains
+    return this.filterFuncs[filterOper](itemValue, filterValue)
   }
 
   public render() {
