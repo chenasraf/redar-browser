@@ -11,5 +11,9 @@
   },
   "browser_action": {
     "default_icon": "android-chrome-192x192.png"
-  }
+  },
+  "permissions": [
+    "http://*/",
+    "https://*/"
+  ]
 }
