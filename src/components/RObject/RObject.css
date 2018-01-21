@@ -1,0 +1,29 @@
+@import "../../_variables.css";
+
+.RObject {
+  display: inline-block;
+  background: #fff;
+  filter: $drop-shadow;
+  // max-width: 20vw;
+  padding: 7px;
+  margin: 7px 5px;
+  vertical-align: top;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+
+  & > h3 {
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: $text-light;
+    margin-bottom: 5px;
+  }
+}
+
+.simple {
+  display: inline-block;
+  max-width: 16vw;
+  overflow: hidden;
+  white-space: pre;
+  text-overflow: ellipsis;
+}

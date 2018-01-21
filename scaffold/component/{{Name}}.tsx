@@ -5,14 +5,13 @@ import * as I from './{{Name}}.module'
 class {{Name}} extends React.Component<I.IProps, I.IState> {
   constructor(props: I.IProps) {
     super(props)
-    this.state = {
-      //
-    }
+    this.state = {}
   }
 
   render() {
     const classNames = [
       css.{{Name}},
+      this.props.className
     ].join(' ')
     
     return (

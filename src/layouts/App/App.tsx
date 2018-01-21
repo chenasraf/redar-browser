@@ -2,7 +2,7 @@ import * as React from 'react'
 import * as css from './App.css'
 import Header from 'components/Header/Header'
 import KeyList from 'components/KeyList/KeyList'
-import DataTable from 'components/DataTable/DataTable'
+import ResponseRepr from 'components/ResponseRepr/ResponseRepr'
 import axios, { AxiosResponse } from 'axios'
 import { Store } from 'common/Dispatcher'
 
@@ -42,7 +42,7 @@ class App extends React.Component<TProps> {
         <div className={css.content}>
           <KeyList className={[css.scrollable, css.keyList].join(' ')}
             {...this.props} />
-          <DataTable className={[css.scrollable, css.table].join(' ')}
+          <ResponseRepr className={[css.scrollable, css.table].join(' ')}
             {...this.props} />
         </div>
       </div>

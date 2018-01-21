@@ -84,23 +84,23 @@ class Header extends React.Component<I.IProps, I.IState> {
     axios.request({ method, url, data: this.requestPayload, headers: this.requestHeaders })
       .then((response: AxiosResponse) => {
         const { data } = response
-        let viewKey = this.props.store.get(StoreKeys.ViewKey, null)
-        let tableData
+        // let viewKey = this.props.store.get(StoreKeys.ViewKey, null)
+        // let tableData
         
-        if (viewKey && data.hasOwnProperty(viewKey)) {
-          tableData = data[viewKey]
-        } else {
-          viewKey = ''
-        }
+        // if (viewKey && data.hasOwnProperty(viewKey)) {
+        //   tableData = data[viewKey]
+        // } else {
+        //   viewKey = ''
+        // }
 
-        if (viewKey === '' || !tableData) {
-          tableData = [data]
-        }
+        // if (viewKey === '' || !tableData) {
+        //   tableData = [data]
+        // }
 
         dispatch(ActionTypes.UPDATE_RESPONSE, data)
-        dispatch(ActionTypes.UPDATE_VIEWKEY, viewKey)
-        dispatch(ActionTypes.UPDATE_TABLE, tableData)
-        dispatch(ActionTypes.UPDATE_COLUMNS, this.getDataColumns(tableData))
+        // dispatch(ActionTypes.UPDATE_VIEWKEY, viewKey)
+        // dispatch(ActionTypes.UPDATE_TABLE, tableData)
+        // dispatch(ActionTypes.UPDATE_COLUMNS, this.getDataColumns(tableData))
       })
   }
 

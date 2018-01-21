@@ -18,20 +18,23 @@ const StoreKeys = {
   RequestType: 'REQ_TYPE'
 }
 
-export interface Action<T = any> {
-  name: string,
+export type TActionName =
+  'UPDATE_RESPONSE' | 'UPDATE_TABLE' | 'UPDATE_COLUMNS' | 'UPDATE_VIEWKEY' | 'UPDATE_REQ_TYPE'
+
+export interface IAction<T = any> {
+  name: TActionName | string,
   payload?: T
 }
 
-export const AppDispatcher = new Dispatcher<Action>()
+export const AppDispatcher = new Dispatcher<IAction>()
 
 function innerObjFromKey<T = any>(obj: T, k: string): Immutable.OrderedMap<string, T> {
   return Immutable.OrderedMap<string, any>(obj || {}).get(k, {})
 }
 
-type TState = Immutable.OrderedMap<string, any>
+export type IState = Immutable.OrderedMap<string, any>
 
-class AppStore extends ReduceStore<TState, Action> {
+class AppStore extends ReduceStore<IState, IAction> {
   constructor() {
     super(AppDispatcher)
   }
@@ -40,7 +43,7 @@ class AppStore extends ReduceStore<TState, Action> {
     return Immutable.OrderedMap<string, any>()
   }
 
-  reduce(state: TState, action: Action) {
+  reduce(state: IState, action: IAction) {
     switch (action.name) {
       case ActionTypes.UPDATE_COLUMNS:
         return state.set(StoreKeys.Columns, action.payload)
@@ -56,14 +59,14 @@ class AppStore extends ReduceStore<TState, Action> {
   }
 }
 
-export function dispatch(name: string, payload: any) {
+export function dispatch(name: TActionName | string, payload: any) {
   AppDispatcher.dispatch({
     name, payload
   })
 }
 
-export function register(name: string, callback: (payload: any) => void): string {
-  return AppDispatcher.register((payload: Action) => {
+function register(name: TActionName | string, callback: (payload: any) => void): string {
+  return AppDispatcher.register((payload: IAction) => {
     if (payload.name === name) {
       console.debug('Dispatching:', payload.name, payload.payload)
       callback(payload.payload)
@@ -73,4 +76,4 @@ export function register(name: string, callback: (payload: any) => void): string
 
 const Store = new AppStore()
 export default AppDispatcher
-export { Store, ActionTypes, StoreKeys }
+export { Store, ActionTypes, StoreKeys, AppDispatcher as Dispatcher, register }
