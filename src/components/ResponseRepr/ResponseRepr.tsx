@@ -9,7 +9,7 @@ class ResponseRepr extends React.Component<I.IProps, I.IState> {
   constructor(props: I.IProps) {
     super(props)
     this.state = {
-      response: props.store.get(D.ActionTypes.UPDATE_RESPONSE)
+      response: props.store.get(D.StoreKeys.Response, {})
     }
   }
 
@@ -20,7 +20,9 @@ class ResponseRepr extends React.Component<I.IProps, I.IState> {
       }),
 
       D.register(D.ActionTypes.UPDATE_VIEWKEY, (viewKey) => {
-        this.setState({ response: this.state.response[viewKey] })
+        let resp = this.props.store.get(D.StoreKeys.Response, {})
+        resp = resp && viewKey && resp.hasOwnProperty(viewKey) ? resp[viewKey] : resp
+        this.setState({ response: resp })
       }),
     ]
   }
