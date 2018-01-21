@@ -21,16 +21,16 @@ class KeyList extends React.Component<I.IProps, I.IState> {
   public componentWillMount() {
     this.listeners = [
       register(ActionTypes.UPDATE_RESPONSE, (data: any) => {
+        const viewKey = this.props.store.get(StoreKeys.ViewKey, '')
+
         this.setState({
           keyList: this.keyListFromObject(data || {}),
-          viewKey: this.getViewKey(data || {}),
+          viewKey,
         })
       }),
         
       register(ActionTypes.UPDATE_VIEWKEY, (data: any) => {
-        this.setState({
-          viewKey: data
-        })
+        this.setState({ viewKey: data })
       })
     ]
   }
@@ -43,54 +43,21 @@ class KeyList extends React.Component<I.IProps, I.IState> {
     return [''].concat(Object.keys(data))
   }
 
-  private getViewKey(data: any) {
-    let viewKey = this.state.viewKey
-    
-    if (viewKey && data.hasOwnProperty(viewKey)) {
-      return viewKey
-    }
-
-    for (const k in data) {
-      if (data.hasOwnProperty(k) && data[k] && data[k].constructor === Array) {
-        return k
-      }
-    }
-
-    return ''
-  }
-
   private selectItem(key: string) {
-    const body = this.props.store.get(StoreKeys.Response, {})
-    const tableData = key !== '' ? body[key] : [body]
-
     this.setState({ viewKey: key }, () => {
       dispatch(ActionTypes.UPDATE_VIEWKEY, key)
-      dispatch(ActionTypes.UPDATE_TABLE, tableData)
-      dispatch(ActionTypes.UPDATE_COLUMNS, this.columnListFromRow(tableData && tableData.length ? tableData[0] : []))
     })
-  }
-
-  private columnListFromRow(row: any) {
-    const keys = ['_id']
-    
-    Object.keys(row).sort().forEach(k => {
-      k = k.toLowerCase()
-      if (k !== '_id' && k !== 'id') {
-        keys.push(k)
-      }
-    })
-
-    return keys
   }
 
   private get keyListElements() {
     const fullData = this.props.store.get(StoreKeys.Response, {})
+    const viewKey = this.state.viewKey
 
     return this.state.keyList.map((key: string) => {
       const className = [
         css.item,
         key === '' || (fullData[key] && fullData[key].constructor === Array) ? css.valid : '',
-        this.state.viewKey === key ? css.selected : ''
+        viewKey === key ? css.selected : ''
       ].join(' ')
 
       return (

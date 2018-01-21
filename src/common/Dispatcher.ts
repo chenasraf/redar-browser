@@ -4,16 +4,12 @@ import * as Immutable from 'immutable'
 
 const ActionTypes = {
   UPDATE_RESPONSE: 'UPDATE_RESPONSE',
-  UPDATE_TABLE: 'UPDATE_TABLE',
-  UPDATE_COLUMNS: 'UPDATE_COLUMNS',
   UPDATE_VIEWKEY: 'UPDATE_VIEWKEY',
   UPDATE_REQ_TYPE: 'UPDATE_REQ_TYPE',
 }
 
 const StoreKeys = {
   Response: 'RESPONSE',
-  Table: 'TABLE',
-  Columns: 'COLUMNS',
   ViewKey: 'VIEWKEY',
   RequestType: 'REQ_TYPE'
 }
@@ -40,29 +36,43 @@ class AppStore extends ReduceStore<IState, IAction> {
   }
 
   getInitialState() {
-    return Immutable.OrderedMap<string, any>()
+    const t = Immutable.OrderedMap<string, any>([
+      [StoreKeys.ViewKey, localStorage.lastViewKey || '']
+    ])
+    console.debug(t)
+    return t
   }
 
   reduce(state: IState, action: IAction) {
     switch (action.name) {
-      case ActionTypes.UPDATE_COLUMNS:
-        return state.set(StoreKeys.Columns, action.payload)
-      case ActionTypes.UPDATE_TABLE:
-        return state.set(StoreKeys.Table, action.payload)
       case ActionTypes.UPDATE_RESPONSE:
+        let viewKey = state.get(StoreKeys.ViewKey)
+        if (localStorage.lastViewKey !== '' && action.payload && !action.payload.hasOwnProperty(viewKey)) {
+          viewKey = this.getViewKey(action.payload)
+          state = state.set(StoreKeys.ViewKey, viewKey)
+        }
         return state.set(StoreKeys.Response, action.payload)
       case ActionTypes.UPDATE_VIEWKEY:
+        localStorage.lastViewKey = action.payload
         return state.set(StoreKeys.ViewKey, action.payload)
       default:
         return state
     }
   }
+
+  private getViewKey(data: any) {
+    for (const k in data) {
+      if (data.hasOwnProperty(k) && data[k] && data[k].constructor === Array) {
+        return k
+      }
+    }
+    
+    return ''
+  }
 }
 
 export function dispatch(name: TActionName | string, payload: any) {
-  AppDispatcher.dispatch({
-    name, payload
-  })
+  AppDispatcher.dispatch({ name, payload })
 }
 
 function register(name: TActionName | string, callback: (payload: any) => void): string {

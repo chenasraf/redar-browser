@@ -9,13 +9,13 @@ class {{Name}} extends React.Component<I.IProps, I.IState> {
   }
 
   render() {
-    const classNames = [
+    const className = [
       css.{{Name}},
       this.props.className
     ].join(' ')
     
     return (
-      <div className={classNames}>
+      <div className={className}>
         {{Name}} Component
       </div>
     )

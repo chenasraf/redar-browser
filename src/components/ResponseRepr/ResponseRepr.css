@@ -4,6 +4,36 @@
   /* */
 }
 
-.obj {
-  // max-width: 11vw;
+.table {
+  display: grid;
+  grid-row-gap: 8px;
+  padding: 10px;
+
+  & h3 {
+    font-weight: bold;
+    text-transform: uppercase;
+    color: $text-light;
+    font-size: 0.9em;
+  }
+}
+
+.cell {
+  width: 100%;
+  margin: 0 !important;
+  border-left-width: 0px !important;
+  border-radius: 0 !important;
+
+  &.row-start {
+    border-radius: 5px 0 0 5px !important;
+    border-left-width: 1px !important;
+    margin-left: 0 !important;
+  }
+
+  &.row-end {
+    border-radius: 0 5px 5px 0 !important;
+  }
+
+  & > h3 {
+    display: none;
+  }
 }

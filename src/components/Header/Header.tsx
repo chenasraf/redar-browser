@@ -105,11 +105,18 @@ class Header extends React.Component<I.IProps, I.IState> {
   }
 
   private get requestPayload() {
-    if (!this.state.requestType || !this.requestTypeMap.hasOwnProperty(this.state.requestType)) {
+    if (!this.state.requestType
+        || !this.requestTypeMap.hasOwnProperty(this.state.requestType)
+        || !this.state.requestPayload.length) {
       return undefined
     }
 
-    return this.requestTypeMap[this.state.requestType](this.state.requestPayload)
+    try {
+      return this.requestTypeMap[this.state.requestType](this.state.requestPayload)
+    } catch (e) {
+      console.error(e)
+      return "Can't parse response"
+    }
   }
   
   private getDataColumns(data?: any) {
