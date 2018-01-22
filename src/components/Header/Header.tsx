@@ -2,15 +2,14 @@ import * as React from 'react'
 import * as css from './Header.css'
 import * as I from './Header.module'
 import AddressBar from 'components/AddressBar/AddressBar'
-import RequestTypeSelector from 'components/RequestTypeSelector/RequestTypeSelector'
+import RequestType from 'components/RequestType/RequestType'
 import SelectBox, { Option, styles as selectBoxStyle } from 'components/SelectBox/SelectBox'
 import Button from 'components/Button/Button'
 import axios, { AxiosResponse } from 'axios'
 import { dispatch, register, ActionTypes, StoreKeys } from 'common/Dispatcher'
+import * as classNames from 'classnames'
 
-class Header extends React.Component<I.IProps, I.IState> {
-  private listeners: string[]
-  
+class Header extends React.Component<I.IProps, I.IState> {  
   private httpMethods = [
     { label: 'GET', value: 'GET' },
     { label: 'POST', value: 'POST' },
@@ -18,32 +17,20 @@ class Header extends React.Component<I.IProps, I.IState> {
     { label: 'DELETE', value: 'DELETE' },
   ] as Array<Option<string>>
 
-  private requestTypeMap = {
-    JSON: JSON.parse,
-    Form: String
-  }
-
   constructor(props: I.IProps) {
     super(props)
     this.state = {
       url: localStorage.lastUrl || '',
       method: localStorage.lastMethod || 'GET',
       requestPayload: localStorage.lastRequestPayload || '',
-      requestType: props.store.get(StoreKeys.RequestType, 'JSON'),
       headers: localStorage.lastHeaders || '',
     }
   }
 
-  public componentWillMount() {
+  public componentDidMount() {
     if (this.state.url.length) {
       this.go()
     }
-
-    this.listeners = [
-      register(ActionTypes.UPDATE_REQ_TYPE, (requestType: string) => {
-        this.setState({ requestType })
-      })
-    ]
   }
 
   private changeURL(url: string) {
@@ -80,70 +67,16 @@ class Header extends React.Component<I.IProps, I.IState> {
 
   private go() {
     const { method, url: url } = this.state
-
-    axios.request({ method, url, data: this.requestPayload, headers: this.requestHeaders })
-      .then((response: AxiosResponse) => {
-        const { data } = response
-        // let viewKey = this.props.store.get(StoreKeys.ViewKey, null)
-        // let tableData
-        
-        // if (viewKey && data.hasOwnProperty(viewKey)) {
-        //   tableData = data[viewKey]
-        // } else {
-        //   viewKey = ''
-        // }
-
-        // if (viewKey === '' || !tableData) {
-        //   tableData = [data]
-        // }
-
-        dispatch(ActionTypes.UPDATE_RESPONSE, data)
-        // dispatch(ActionTypes.UPDATE_VIEWKEY, viewKey)
-        // dispatch(ActionTypes.UPDATE_TABLE, tableData)
-        // dispatch(ActionTypes.UPDATE_COLUMNS, this.getDataColumns(tableData))
-      })
-  }
-
-  private get requestPayload() {
-    if (!this.state.requestType
-        || !this.requestTypeMap.hasOwnProperty(this.state.requestType)
-        || !this.state.requestPayload.length) {
-      return undefined
-    }
-
-    try {
-      return this.requestTypeMap[this.state.requestType](this.state.requestPayload)
-    } catch (e) {
-      console.error(e)
-      return "Can't parse response"
-    }
-  }
-  
-  private getDataColumns(data?: any) {
-    if (!data || !data.length) {
-      return []
-    }
-
-    const columns = Object.keys(data[0])
-    const idIdx = columns.map(s => s.toLocaleLowerCase()).indexOf('id')
-    const _idIdx = columns.map(s => s.toLocaleLowerCase()).indexOf('_id')
-
-    if (idIdx >= 0) {
-      columns.splice(idIdx, 1)
-    }
-
-    if (_idIdx >= 0) {
-      columns.splice(_idIdx, 1)
-    }
-
-    columns.unshift('_id')
-
-    return columns
+    dispatch(ActionTypes.SEND_REQUEST, {
+      method, url,
+      data: this.state.requestPayload,
+      headers: this.requestHeaders
+    })
   }
 
   render() {
     return (
-      <div className={[css.header, this.props.className || ''].join(' ')}>
+      <div className={classNames(css.header, this.props.className)}>
         <div className={css.nav}>
           <div className={css.method}>
             <SelectBox name="method"
@@ -163,14 +96,9 @@ class Header extends React.Component<I.IProps, I.IState> {
           </div>
         </div>
         <div className={css.requestDataContainer}>
-          <RequestTypeSelector {...this.props} />
-          <div className={css.payload}>
-            <h4 className={css.title}>Payload</h4>
-            <textarea name="requestPayload"
-              value={this.state.requestPayload}
-              placeholder="Request Payload"
-              onChange={(e) => this.changeRequestPayload(e.target.value)} />
-          </div>
+          <RequestType className={css.payload}
+            onChange={(payload) => this.setState({ requestPayload: payload })}
+            store={this.props.store} />
           <div className={css.headers}>
             <h4 className={css.title}>Headers</h4>
             <textarea name="headers"

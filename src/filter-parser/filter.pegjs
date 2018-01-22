@@ -1,15 +1,3 @@
-Chain
-  = all:Equals+ {
-    let filters = {}
-    all.forEach(i => filters[i[0]] = { oper: i[1], value: i[2] })
-    return filters
-  }
-
-Equals
-  = _ key:Filter _ operator:Operator _ value:Value _ {
-  	return [key, operator, value]
-  }
-
 Operator "comparison operator =, !=, >, >=, <, or <="
   = eq:"="
   / neq1:[\<\>!]"=" { return neq1 + '=' }
@@ -44,12 +32,23 @@ EscapeSequence
   = "'"
   / '"'
   / "\\"
-  / "b"  { return "\b";   }
-  / "f"  { return "\f";   }
-  / "n"  { return "\n";   }
-  / "r"  { return "\r";   }
-  / "t"  { return "\t";   }
-  / "v"  { return "\x0B"; }
   
 _ "whitespace"
  = $ [ \t]*
+ 
+LogicalOr
+  = left:Equals "||" right:Equals { return { left, right, oper: 'or' } }
+  / LogicalAnd
+  
+LogicalAnd
+  = left:Equals "&&" right:Equals { return { left, right, oper: 'and' } }
+  / Primary
+  
+Primary
+  = Equals 
+  / "(" or:LogicalOr ")" { console.log(or); return or }
+
+Equals
+  = _ key:Filter _ oper:Operator _ value:Value _ {
+  	return { key, oper, value }
+  }

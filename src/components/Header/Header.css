@@ -12,14 +12,14 @@
 .nav {
   display: grid;
   grid-template-columns: [method] 100px [address] auto [go] 70px;
-  width: calc(100% - 14px);
+  width: 100%;
 }
 
 .request-data-container {
   display: grid;
-  grid-template-columns: [type] 10% [payload] 40% [headers] 50%;
+  grid-template-columns: [payload] 2fr [headers] 1fr;
   grid-column-gap: 14px;
-  width: calc(100% - 40px);
+  width: 100%;
 
   & .title {
     text-transform: uppercase;

@@ -6,6 +6,7 @@ import SelectBox, { Option, styles as selectBoxStyle } from 'components/SelectBo
 import Button from 'components/Button/Button'
 import axios, { AxiosResponse } from 'axios'
 import Dispatcher, { register, dispatch, ActionTypes, StoreKeys } from 'common/Dispatcher'
+import * as classNames from 'classnames'
 
 class RequestTypeSelector extends React.Component<I.IProps, I.IState> {
   private listeners: string[]
@@ -54,8 +55,9 @@ class RequestTypeSelector extends React.Component<I.IProps, I.IState> {
   }
 
   render() {
+    const className = classNames(css.RequestTypeSelector, this.props.className)
     return (
-      <div className={css.RequestTypeSelector}>
+      <div className={className}>
         {this.typeItems}
       </div>
     )

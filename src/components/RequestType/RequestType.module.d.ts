@@ -1,8 +1,10 @@
 export interface IProps {
   className?: string
+  onChange?(payload: any): void
   store: any
 }
 
 export interface IState {
-  requestType: string
+  type: string
+  payload: string
 }
