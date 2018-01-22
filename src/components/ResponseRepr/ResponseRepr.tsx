@@ -4,7 +4,7 @@ import * as I from './ResponseRepr.module'
 import * as D from 'common/Dispatcher'
 import RObject from 'components/RObject/RObject'
 import * as classNames from 'classnames'
-import { parse } from '../../filter-parser/parser'
+import { parse } from '../../filter-parser/filter.pegjs'
 
 class ResponseRepr extends React.Component<I.IProps, I.IState> {
   private listeners: string[]
