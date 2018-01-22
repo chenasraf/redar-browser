@@ -1,3 +1,18 @@
+/*
+ * Syntax:
+ * [filter_identifier] [operator] [value]
+ * 
+ * Where:
+ * - filter_identifier: [key[.[inner_key | index][ ...]]]
+ * - operator: >= | > | = | != | <= | <
+ * - value: [string | number]
+ * 
+ * Separate multiple filters by spaces. Extra whitespaces are ignored.
+ * 
+ * Examples:
+ * age>=21 last_name != "Doe"
+ */
+
 Chain
   = all:Equals+ {
     let filters = {}
