@@ -9,6 +9,9 @@ const ActionTypes = {
   UPDATE_VIEWKEY: 'UPDATE_VIEWKEY',
   UPDATE_REQ_TYPE: 'UPDATE_REQ_TYPE',
   UPDATE_REQ_PAYLOAD: 'UPDATE_REQ_PAYLOAD',
+  UPDATE_REQ_METHOD: 'UPDATE_REQ_METHOD',
+  UPDATE_REQ_HEADERS: 'UPDATE_REQ_HEADERS',
+  UPDATE_REQ_URL: 'UPDATE_REQ_URL',
 }
 
 const StoreKeys = {
@@ -16,6 +19,9 @@ const StoreKeys = {
   ViewKey: 'VIEWKEY',
   RequestType: 'REQ_TYPE',
   RequestPayload: 'REQ_PAYLOAD',
+  RequestMethod: 'REQ_METHOD',
+  RequestHeaders: 'REQ_HEADERS',
+  RequestURL: 'REQ_URL',
 }
 
 export type TActionName =

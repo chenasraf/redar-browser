@@ -1,0 +1,27 @@
+@import "../../_variables.css";
+
+.NavBar {
+  display: grid;
+  grid-template-columns: [method] 100px [address] auto [go] 70px;
+  width: 100%;
+}
+
+.method {
+  margin-right: 8px;
+}
+
+.address {
+  & input {
+    width: 100%;
+    padding: 7px 14px;
+    font-size: 1rem;
+  }
+}
+
+.go {
+  & button {
+    width: 100%;
+    font-size: 1rem;
+    padding: 7px 14px;
+  }
+}

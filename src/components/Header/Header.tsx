@@ -8,15 +8,9 @@ import Button from 'components/Button/Button'
 import axios, { AxiosResponse } from 'axios'
 import { dispatch, register, ActionTypes, StoreKeys } from 'common/Dispatcher'
 import * as classNames from 'classnames'
+import NavBar from 'components/NavBar/NavBar'
 
-class Header extends React.Component<I.IProps, I.IState> {  
-  private httpMethods = [
-    { label: 'GET', value: 'GET' },
-    { label: 'POST', value: 'POST' },
-    { label: 'PUT', value: 'PUT' },
-    { label: 'DELETE', value: 'DELETE' },
-  ] as Array<Option<string>>
-
+class Header extends React.Component<I.IProps, I.IState> {
   constructor(props: I.IProps) {
     super(props)
     this.state = {
@@ -77,24 +71,7 @@ class Header extends React.Component<I.IProps, I.IState> {
   render() {
     return (
       <div className={classNames(css.header, this.props.className)}>
-        <div className={css.nav}>
-          <div className={css.method}>
-            <SelectBox name="method"
-              className={selectBoxStyle.selectBox}
-              value={this.state.method}
-              options={this.httpMethods}
-              placeholder="METHOD"
-              onChange={(value: Option<string>) => this.changeMethod(value.value!)}
-              />
-          </div>
-          <div className={css.address}>
-            <AddressBar url={this.state.url}
-              handleChange={(value) => this.changeURL(value)}/>
-          </div>
-          <div className={css.go}>
-            <Button onClick={() => this.go()}>Go</Button>
-          </div>
-        </div>
+        <NavBar store={this.props.store} />
         <div className={css.requestDataContainer}>
           <RequestType className={css.payload}
             onChange={(payload) => this.setState({ requestPayload: payload })}

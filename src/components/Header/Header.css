@@ -9,12 +9,6 @@
   grid-template-rows: min-content auto;
 }
 
-.nav {
-  display: grid;
-  grid-template-columns: [method] 100px [address] auto [go] 70px;
-  width: 100%;
-}
-
 .request-data-container {
   display: grid;
   grid-template-columns: [payload] 2fr [headers] 1fr;
@@ -27,20 +21,6 @@
     margin-bottom: 5px;
     font-weight: bold;
     font-size: 0.8em;
-  }
-}
-
-.method {
-  grid-area: method;
-  margin-right: 8px;
-}
-
-.address {
-  grid-area: address;
-  & input {
-    width: 100%;
-    padding: 7px 14px;
-    font-size: 1rem;
   }
 }
 
@@ -59,14 +39,5 @@
     overflow-x: hidden;
     min-height: 50px;
     font-family: "Lucida Grande", "Courier New", monospace, serif;
-  }
-}
-
-.go {
-  grid-area: go;
-  & button {
-    width: 100%;
-    font-size: 1rem;
-    padding: 7px 14px;
   }
 }
