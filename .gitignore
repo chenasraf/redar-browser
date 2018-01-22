@@ -39,3 +39,4 @@ yarn-error.log*
 # Any extension export files
 *.zip
 *.crx
+public/test.json
