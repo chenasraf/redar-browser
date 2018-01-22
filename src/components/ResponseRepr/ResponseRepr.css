@@ -37,3 +37,9 @@
     display: none;
   }
 }
+
+.filter-input {
+  width: 100%;
+  padding: 5px 7px;
+  font-size: 1em;
+}

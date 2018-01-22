@@ -5,4 +5,7 @@ export interface IProps {
 
 export interface IState {
   response: any
+  sortKey: string
+  sortDesc: boolean
+  filter: string
 }
