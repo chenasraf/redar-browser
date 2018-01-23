@@ -9,6 +9,7 @@ import axios, { AxiosResponse } from 'axios'
 import { dispatch, register, ActionTypes, StoreKeys } from 'common/Dispatcher'
 import * as classNames from 'classnames'
 import NavBar from 'components/NavBar/NavBar'
+import RequestHeaders from 'components/RequestHeaders/RequestHeaders'
 
 class Header extends React.Component<I.IProps, I.IState> {
   constructor(props: I.IProps) {
@@ -16,7 +17,7 @@ class Header extends React.Component<I.IProps, I.IState> {
     this.state = {
       url: localStorage.lastUrl || '',
       method: localStorage.lastMethod || 'GET',
-      requestPayload: localStorage.lastRequestPayload || '',
+      requestPayload: localStorage.lastPayload || '',
       headers: localStorage.lastHeaders || '',
     }
   }
@@ -27,44 +28,13 @@ class Header extends React.Component<I.IProps, I.IState> {
     }
   }
 
-  private changeURL(url: string) {
-    this.setState({ url })
-    localStorage.lastUrl = url
-  }
-  
-  private changeMethod(method: string) {
-    this.setState({ method })
-    localStorage.lastMethod = method
-  }
-  
-  private changeRequestPayload(requestPayload: string) {
-    this.setState({ requestPayload })
-    localStorage.lastRequestPayload = requestPayload
-  }
-
-  private changeHeaders(headers: string) {
-    this.setState({ headers })
-    localStorage.lastHeaders = headers
-  }
-
-  private get requestHeaders() {
-    const headers = this.state.headers.split(`\n`).reduce((accu, cur) => {
-      const [key, val] = cur.split(':').map(s => s.trim())
-      if (key.length) {
-        accu[key] = val
-      }
-      return accu
-    }, {})
-
-    return headers
-  }
-
   private go() {
     const { method, url: url } = this.state
     dispatch(ActionTypes.SEND_REQUEST, {
-      method, url,
-      data: this.state.requestPayload,
-      headers: this.requestHeaders
+      method: this.props.store.get(StoreKeys.RequestMethod),
+      url: this.props.store.get(StoreKeys.RequestURL),
+      data: this.props.store.get(StoreKeys.RequestPayload),
+      headers: this.props.store.get(StoreKeys.RequestHeaders),
     })
   }
 
@@ -73,16 +43,8 @@ class Header extends React.Component<I.IProps, I.IState> {
       <div className={classNames(css.header, this.props.className)}>
         <NavBar store={this.props.store} />
         <div className={css.requestDataContainer}>
-          <RequestType className={css.payload}
-            onChange={(payload) => this.setState({ requestPayload: payload })}
-            store={this.props.store} />
-          <div className={css.headers}>
-            <h4 className={css.title}>Headers</h4>
-            <textarea name="headers"
-              value={this.state.headers}
-              placeholder="Headers"
-              onChange={(e) => this.changeHeaders(e.target.value)} />
-          </div>
+          <RequestType store={this.props.store} />
+          <RequestHeaders store={this.props.store} />
         </div>
       </div>
     )

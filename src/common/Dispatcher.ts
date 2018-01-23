@@ -34,11 +34,11 @@ export interface IAction<T = any> {
 
 export const AppDispatcher = new Dispatcher<IAction>()
 
-function innerObjFromKey<T = any>(obj: T, k: string): Immutable.OrderedMap<string, T> {
-  return Immutable.OrderedMap<string, any>(obj || {}).get(k, {})
+function innerObjFromKey<T = any>(obj: T, k: string): Immutable.Map<string, T> {
+  return Immutable.Map<string, any>(obj || {}).get(k, {})
 }
 
-export type IState = Immutable.OrderedMap<string, any>
+export type IState = Immutable.Map<string, any>
 
 class AppStore extends ReduceStore<IState, IAction> {
   constructor() {
@@ -46,12 +46,13 @@ class AppStore extends ReduceStore<IState, IAction> {
   }
 
   getInitialState() {
-    const t = Immutable.OrderedMap<string, any>([
+    return Immutable.Map<string, any>([
       [StoreKeys.ViewKey, localStorage.lastViewKey || ''],
       [StoreKeys.RequestType, localStorage.lastRequestType || 'JSON'],
-      [StoreKeys.RequestPayload, localStorage.lastRequestPayload || ''],
+      [StoreKeys.RequestPayload, localStorage.lastPayload || ''],
+      [StoreKeys.RequestURL, localStorage.lastURL || ''],
+      [StoreKeys.RequestHeaders, localStorage.lastHeaders || ''],
     ])
-    return t
   }
 
   reduce(state: IState, action: IAction) {
@@ -66,6 +67,18 @@ class AppStore extends ReduceStore<IState, IAction> {
       case ActionTypes.UPDATE_VIEWKEY:
         localStorage.lastViewKey = action.payload
         return state.set(StoreKeys.ViewKey, action.payload)
+      case ActionTypes.UPDATE_REQ_HEADERS:
+        localStorage.lastHeaders = action.payload
+        return state.set(StoreKeys.RequestHeaders, action.payload)
+      case ActionTypes.UPDATE_REQ_URL:
+        localStorage.lastURL = action.payload
+        return state.set(StoreKeys.RequestURL, action.payload)
+      case ActionTypes.UPDATE_REQ_METHOD:
+        localStorage.lastMethod = action.payload
+        return state.set(StoreKeys.RequestMethod, action.payload)
+      case ActionTypes.UPDATE_REQ_PAYLOAD:
+        localStorage.lastPayload = action.payload
+        return state.set(StoreKeys.RequestPayload, action.payload)
       case ActionTypes.SEND_REQUEST:
         axios.request(action.payload)
           .then((response: AxiosResponse) => {

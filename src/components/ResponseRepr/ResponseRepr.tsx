@@ -52,10 +52,17 @@ class ResponseRepr extends React.Component<I.IProps, I.IState> {
   private columns() {
     const keys = Object.keys(this.state.response[0] || {})
     return keys.map((key) => {
+      const cls = classNames(css.sortIcon, 'material-icons', {
+        [css.active]: this.state.sortKey === key
+      })
+      
       return (
         <h3 key={`col-th-${key}`}
           onClick={() => this.sortBy(key)}>
           {key}
+          <i className={cls}>
+            {this.state.sortKey === key && this.state.sortDesc ? 'arrow_drop_down' : 'arrow_drop_up'}
+          </i>
         </h3>
       )
     })
@@ -163,7 +170,7 @@ class ResponseRepr extends React.Component<I.IProps, I.IState> {
 
     return (
       <div className={css.table}
-        style={{gridTemplateRows: `repeat(${colAmt}, auto)`}}>}
+        style={{gridTemplateRows: `repeat(${colAmt}, auto)`}}>
         <RObject data={response} />
       </div>
     )

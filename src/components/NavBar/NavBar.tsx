@@ -5,7 +5,7 @@ import * as classNames from 'classnames'
 import SelectBox, { Option, styles as selectBoxStyle } from 'components/SelectBox/SelectBox'
 import AddressBar from 'components/AddressBar/AddressBar'
 import Button from 'components/Button/Button'
-import { StoreKeys } from 'common/Dispatcher'
+import { StoreKeys, dispatch, ActionTypes } from 'common/Dispatcher'
 
 class NavBar extends React.Component<I.IProps, I.IState> {  
   private httpMethods = [
@@ -23,13 +23,19 @@ class NavBar extends React.Component<I.IProps, I.IState> {
     }
   }
 
-  private changeMethod(value: string) {
+  private changeMethod(value: I.Methods) {
+    dispatch(ActionTypes.UPDATE_REQ_METHOD, value)
+    this.setState({ method: value })
+
     if (this.props.onChangeMethod) {
       this.props.onChangeMethod(value)
     }
   }
 
   private changeURL(value: string) {
+    dispatch(ActionTypes.UPDATE_REQ_URL, value)
+    this.setState({ url: value })
+
     if (this.props.onChangeURL) {
       this.props.onChangeURL(value)
     }
@@ -53,12 +59,13 @@ class NavBar extends React.Component<I.IProps, I.IState> {
               value={this.state.method}
               options={this.httpMethods}
               placeholder="METHOD"
-              onChange={(value: Option<string>) => this.changeMethod(value.value!)}
+              onChange={(value: Option<I.Methods>) => this.changeMethod(value.value!)}
               />
           </div>
           <div className={css.address}>
             <AddressBar url={this.state.url}
-              handleChange={(value) => this.changeURL(value)}/>
+              store={this.props.store}
+              onChange={(value) => this.changeURL(value)}/>
           </div>
           <div className={css.go}>
             <Button onClick={() => this.go()}>Go</Button>

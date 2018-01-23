@@ -1,6 +1,7 @@
 export interface IProps {
-  url?: string
-  handleChange?(value: string, e: React.ChangeEvent<HTMLInputElement>): void
+  store: any
+  url: string
+  onChange?(value: string, e: React.ChangeEvent<HTMLInputElement>): void
 }
 
 export interface IState {

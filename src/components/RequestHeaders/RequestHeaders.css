@@ -1,0 +1,29 @@
+@import "../../_variables.css";
+
+.RequestHeaders {
+  display: grid;
+  grid-row-gap: 5px;
+
+  & input {
+    display: block;
+    width: 100%;
+    border: 1px solid #ccc;
+    font-family: "Lucida Grande", "Courier New", monospace, serif;
+    padding: 6px 3px;
+  }
+}
+
+.title {
+  text-transform: uppercase;
+  color: #555;
+  font-weight: bold;
+  font-size: 0.8em;
+}
+
+.pair {
+  display: grid;
+  width: 100%;
+  grid-column-gap: 3px;
+  grid-template-columns: repeat(2, 50%);
+  min-width: 50%;
+}

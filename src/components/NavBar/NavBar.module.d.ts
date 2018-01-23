@@ -7,6 +7,8 @@ export interface IProps {
 }
 
 export interface IState {
-  method: 'GET' | 'POST' | 'PUT' | 'DELETE'
+  method: Methods
   url: string
 }
+
+export type Methods = 'GET' | 'POST' | 'PUT' | 'DELETE'

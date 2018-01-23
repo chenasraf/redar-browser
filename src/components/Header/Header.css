@@ -14,30 +14,4 @@
   grid-template-columns: [payload] 2fr [headers] 1fr;
   grid-column-gap: 14px;
   width: 100%;
-
-  & .title {
-    text-transform: uppercase;
-    color: #555;
-    margin-bottom: 5px;
-    font-weight: bold;
-    font-size: 0.8em;
-  }
-}
-
-.payload {
-  grid-area: payload;
-}
-
-.headers {
-  grid-area: headers;
-}
-
-.payload, .headers {
-  & textarea {
-    width: 100%;
-    border: 1px solid #ccc;
-    overflow-x: hidden;
-    min-height: 50px;
-    font-family: "Lucida Grande", "Courier New", monospace, serif;
-  }
 }

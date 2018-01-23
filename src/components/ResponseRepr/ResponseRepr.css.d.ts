@@ -5,3 +5,5 @@ export const cell: string;
 export const rowStart: string;
 export const rowEnd: string;
 export const filterInput: string;
+export const sortIcon: string;
+export const active: string;
