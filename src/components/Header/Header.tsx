@@ -14,22 +14,16 @@ import RequestHeaders from 'components/RequestHeaders/RequestHeaders'
 class Header extends React.Component<I.IProps, I.IState> {
   constructor(props: I.IProps) {
     super(props)
-    this.state = {
-      url: localStorage.lastUrl || '',
-      method: localStorage.lastMethod || 'GET',
-      requestPayload: localStorage.lastPayload || '',
-      headers: localStorage.lastHeaders || '',
-    }
+    this.state = {}
   }
 
   public componentDidMount() {
-    if (this.state.url.length) {
+    if (this.props.store.get(StoreKeys.RequestURL).length) {
       this.go()
     }
   }
 
   private go() {
-    const { method, url: url } = this.state
     dispatch(ActionTypes.SEND_REQUEST, {
       method: this.props.store.get(StoreKeys.RequestMethod),
       url: this.props.store.get(StoreKeys.RequestURL),

@@ -3,6 +3,7 @@
 .RequestHeaders {
   display: grid;
   grid-row-gap: 5px;
+  grid-template-rows: min-content auto;
 
   & input {
     display: block;

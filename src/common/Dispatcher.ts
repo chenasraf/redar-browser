@@ -52,6 +52,7 @@ class AppStore extends ReduceStore<IState, IAction> {
       [StoreKeys.RequestPayload, localStorage.lastPayload || ''],
       [StoreKeys.RequestURL, localStorage.lastURL || ''],
       [StoreKeys.RequestHeaders, localStorage.lastHeaders || ''],
+      [StoreKeys.RequestMethod, localStorage.lastMethod || ''],
     ])
   }
 
