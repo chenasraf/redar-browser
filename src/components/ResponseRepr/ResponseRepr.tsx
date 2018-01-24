@@ -24,22 +24,32 @@ class ResponseRepr extends React.Component<I.IProps, I.IState> {
     this.listeners = [
       D.register(D.ActionTypes.UPDATE_RESPONSE, (response) => {
         const viewKey = this.props.store.get(D.StoreKeys.ViewKey)
-        if (viewKey && Object.keys(response).indexOf(viewKey) > -1) {
-          response = response[viewKey]
+        if (viewKey) {
+          response = this.objectByPath(response, viewKey)
         }
         this.setState({ response })
       }),
 
       D.register(D.ActionTypes.UPDATE_VIEWKEY, (viewKey) => {
-        let resp = this.props.store.get(D.StoreKeys.Response, {})
-        resp = resp && viewKey && resp.hasOwnProperty(viewKey) ? resp[viewKey] : resp
-        this.setState({ response: resp })
+        let response = this.props.store.get(D.StoreKeys.Response, {})
+        response = response && viewKey ? this.objectByPath(response, viewKey) : response
+        this.setState({ response: response })
       }),
     ]
   }
 
   componentWillUnmount() {
     this.listeners.forEach(listener => D.AppDispatcher.unregister(listener))
+  }
+
+  private objectByPath(obj: any, key: string) {
+    return key.split('.').reduce((acc, cur, i) => {
+      if (acc.hasOwnProperty(cur)) {
+        return acc[cur]
+      } else {
+        throw new Error('invalid key!')
+      }
+    }, obj)
   }
 
   private sortBy(key: string) {
@@ -81,8 +91,8 @@ class ResponseRepr extends React.Component<I.IProps, I.IState> {
         // numbers are matching
         if (typeof a[key] === 'number' && typeof b === 'number' ||
             isFinite(a[key]) && isFinite(b[key])) {
-          const out = parseFloat(a[key]) - parseFloat(b[key])
-          return desc ? -out : out
+          const result = parseFloat(a[key]) - parseFloat(b[key])
+          return desc ? -result : result
         }
 
         if (a[key] > b[key]) {
@@ -137,40 +147,55 @@ class ResponseRepr extends React.Component<I.IProps, I.IState> {
     return response
   }
 
+  private filterInput() {
+    return (
+      <input className={css.filterInput}
+        type="text" value={this.state.filter}
+        placeholder={`Filter data (e.g.: first_name="John" age>=32)`}
+        onChange={(e) => this.setState({ filter: e.target.value })} />
+    )
+  }
+
+  private table() {
+    const keys = Object.keys(this.state.response && this.state.response[0] || {})
+    const colAmt = keys.length
+
+    return (
+      <div className={css.table}
+        style={{gridTemplateColumns: `repeat(${colAmt}, auto)`}}>
+          {this.filterInput()}
+          {this.columns()}
+          {this.processedResponse().map((row, i) => {
+            const cls = (j) => {
+              return classNames(css.cell, {
+                [css.rowStart]: j % colAmt === 0,
+                [css.rowEnd]: j % colAmt === colAmt - 1,
+              })
+            }
+
+            return (
+              <RObject className={cls}
+                key={`row-${i}`}
+                data={row} />
+            )
+          })}
+        </div>
+      )
+  }
+
   private getRObjectList() {
     const { response } = this.state
     let colAmt
 
     if (response && response.constructor === Array) {
-      const keys = Object.keys(response[0] || {})
-      colAmt = keys.length
-      return (
-        <div className={css.table}
-          style={{gridTemplateColumns: `repeat(${colAmt}, auto)`}}>
-            {this.columns()}
-            {this.processedResponse().map((row, i) => {
-              const cls = (j) => {
-                return classNames(css.cell, {
-                  [css.rowStart]: j % colAmt === 0,
-                  [css.rowEnd]: j % colAmt === colAmt - 1,
-                })
-              }
-
-              return (
-                  <RObject className={cls}
-                    key={`row-${i}`}
-                    data={row} />
-              )
-            })}
-          </div>
-      )
+      return this.table()
     }
 
     colAmt = Object.keys(response || {})
 
     return (
       <div className={css.table}
-        style={{gridTemplateRows: `repeat(${colAmt}, auto)`}}>
+        style={{gridTemplateRows: `repeat(${colAmt}, min-content)`}}>
         <RObject data={response} />
       </div>
     )
@@ -181,16 +206,10 @@ class ResponseRepr extends React.Component<I.IProps, I.IState> {
       css.ResponseRepr,
       this.props.className
     ].join(' ')
-
-    const repr = this.getRObjectList()
     
     return (
       <div className={className}>
-        <input className={css.filterInput}
-          type="text" value={this.state.filter}
-          placeholder={`Filter data (e.g.: first_name="John" age>=32)`}
-          onChange={(e) => this.setState({ filter: e.target.value })} />
-        {repr}
+        {this.getRObjectList()}
       </div>
     )
   }

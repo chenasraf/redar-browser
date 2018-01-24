@@ -4,6 +4,12 @@ export interface IProps {
 }
 
 export interface IState {
-  keyList: string[]
+  keyList: KeyItem[]
   viewKey: string
+}
+
+export interface KeyItem {
+  label: string,
+  path: string
+  children?: KeyItem[]
 }

@@ -49,10 +49,10 @@ class AppStore extends ReduceStore<IState, IAction> {
     return Immutable.Map<string, any>([
       [StoreKeys.ViewKey, localStorage.lastViewKey || ''],
       [StoreKeys.RequestType, localStorage.lastRequestType || 'JSON'],
+      [StoreKeys.RequestMethod, localStorage.lastMethod || 'GET'],
       [StoreKeys.RequestPayload, localStorage.lastPayload || ''],
       [StoreKeys.RequestURL, localStorage.lastURL || ''],
-      [StoreKeys.RequestHeaders, localStorage.lastHeaders || ''],
-      [StoreKeys.RequestMethod, localStorage.lastMethod || ''],
+      [StoreKeys.RequestHeaders, this.parseHeaderList(localStorage.lastHeaders || '')],
     ])
   }
 
@@ -69,7 +69,7 @@ class AppStore extends ReduceStore<IState, IAction> {
         localStorage.lastViewKey = action.payload
         return state.set(StoreKeys.ViewKey, action.payload)
       case ActionTypes.UPDATE_REQ_HEADERS:
-        localStorage.lastHeaders = action.payload
+        localStorage.lastHeaders = this.stringHeaders(action.payload)
         return state.set(StoreKeys.RequestHeaders, action.payload)
       case ActionTypes.UPDATE_REQ_URL:
         localStorage.lastURL = action.payload
@@ -81,6 +81,14 @@ class AppStore extends ReduceStore<IState, IAction> {
         localStorage.lastPayload = action.payload
         return state.set(StoreKeys.RequestPayload, action.payload)
       case ActionTypes.SEND_REQUEST:
+        if (!action.payload) {
+          action.payload = {
+            url: state.get(StoreKeys.RequestURL),
+            method: state.get(StoreKeys.RequestMethod),
+            data: state.get(StoreKeys.RequestPayload),
+            headers: this.headerListToObject(state.get(StoreKeys.RequestHeaders, Immutable.List<[string, string]>())),
+          }
+        }
         axios.request(action.payload)
           .then((response: AxiosResponse) => {
             dispatch(ActionTypes.UPDATE_RESPONSE, response.data)
@@ -89,6 +97,56 @@ class AppStore extends ReduceStore<IState, IAction> {
       default:
         return state
     }
+  }
+
+  public parseHeaderList(headers: string) {
+    let headerMap = Immutable.List<[string, string]>()
+
+    headers.split('\n').forEach((header, idx) => {
+      const [ name, value ] = header.split(':').map(s => s.trim())
+      const finalName = name.split('-')
+        .map(s => this.capitalize(s))
+        .join('-')
+
+      if (finalName) {
+        headerMap = headerMap.set(idx, [finalName, value || ''])
+      }
+    })
+
+    return headerMap
+  }
+
+  public headerListToObject(headers: Immutable.List<[string, string]>) {
+    const headerObj = {}
+    headers.toJS().forEach((header) => {
+      let [ name, value ] = header
+      name = name.split('-').map(s => this.capitalize(s)).join('-')
+      headerObj[name] = value
+    })
+    return headerObj
+  }
+
+  public stringHeaders(headers: Immutable.List<[string, string]>) {
+    return headers.entrySeq()
+      .map((header) => {
+        if (!header) {
+          return
+        }
+        let [ name, value ] = header[1]
+        name = name.split('-').map(s => this.capitalize(s)).join('-')
+        return name ?
+          `${name}: ${value}`
+        : undefined
+      })
+      .filter(s => Boolean(s))
+      .join('\n')
+  }
+  
+  private capitalize(str: string) {
+    if (!str) {
+      return ''
+    }
+    return str[0].toUpperCase() + str.slice(1).toLowerCase()
   }
 
   private getViewKey(data: any) {
