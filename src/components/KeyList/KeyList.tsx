@@ -17,15 +17,6 @@ class KeyList extends React.Component<I.IProps, I.IState> {
       keyList: this.keyListFromObject(props.store.get(StoreKeys.Response, {})),
       viewKey: props.store.get(StoreKeys.ViewKey, '')
     }
-    console.debug(this.keyListFromObject({
-      one: {
-        two: 2,
-        three: {
-          four: 4,
-          five: 5
-        }
-      }
-    }))
   }
 
   public componentWillMount() {
