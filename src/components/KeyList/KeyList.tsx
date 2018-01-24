@@ -6,6 +6,7 @@ import SelectBox, { Option, styles as selectBoxStyle } from 'components/SelectBo
 import Button from 'components/Button/Button'
 import axios, { AxiosResponse } from 'axios'
 import Dispatcher, { register, dispatch, ActionTypes, StoreKeys } from 'common/Dispatcher'
+import * as classNames from 'classnames'
 
 class KeyList extends React.Component<I.IProps, I.IState> {
   private listeners: string[]
@@ -16,6 +17,15 @@ class KeyList extends React.Component<I.IProps, I.IState> {
       keyList: this.keyListFromObject(props.store.get(StoreKeys.Response, {})),
       viewKey: props.store.get(StoreKeys.ViewKey, '')
     }
+    console.debug(this.keyListFromObject({
+      one: {
+        two: 2,
+        three: {
+          four: 4,
+          five: 5
+        }
+      }
+    }))
   }
 
   public componentWillMount() {
@@ -39,45 +49,66 @@ class KeyList extends React.Component<I.IProps, I.IState> {
     this.listeners.forEach(l => Dispatcher.unregister(l))
   }
 
-  private keyListFromObject(data: any) {
-    return [''].concat(Object.keys(data))
+  private keyListFromObject(data: any, relativePath: string = ''): I.KeyItem[] {
+    const list: I.KeyItem[] = []
+
+    if (relativePath === '') {
+      list.push({
+        label: '[Response]',
+        path: '',
+      })
+    }
+
+    Object.keys(data).forEach((key) => {
+      const newPath = relativePath ? [relativePath, key].join('.') : key
+      let children
+      
+      if (typeof data[key] !== 'string' && typeof data[key] !== 'number' && 
+          data[key].constructor !== Array && Object.keys(data[key]).length) {
+        children = this.keyListFromObject(data[key], newPath)
+      }
+
+      list.push({ label: key, path: newPath, children })
+    })
+    return list
   }
 
-  private selectItem(key: string) {
-    this.setState({ viewKey: key }, () => {
-      dispatch(ActionTypes.UPDATE_VIEWKEY, key)
+  private selectItem(key: I.KeyItem) {
+    this.setState({ viewKey: key.path }, () => {
+      dispatch(ActionTypes.UPDATE_VIEWKEY, key.path)
     })
   }
 
-  private get keyListElements() {
+  private keyListElements(keyList: I.KeyItem[], depth: number = 0) {
     const fullData = this.props.store.get(StoreKeys.Response, {})
     const viewKey = this.state.viewKey
 
-    return this.state.keyList.map((key: string) => {
-      const className = [
-        css.item,
-        key === '' || (fullData[key] && fullData[key].constructor === Array) ? css.valid : '',
-        viewKey === key ? css.selected : ''
-      ].join(' ')
+    return keyList.map((key: I.KeyItem) => {
+      const className = classNames(css.item, {
+        [css.selected]: viewKey === key.path
+      })
 
       return (
-        <div className={className}
-          key={key}
-          onClick={(e) => this.selectItem(key)}>
-          {key === '' ? '[Response]' : key}
+        <div key={key.path}>
+          <div className={className}
+            style={{marginLeft: depth * 20 + 'px'}}
+            onClick={(e) => this.selectItem(key)}>
+            {key.label}
+          </div>
+          {key.children && key.children.length ? (
+            this.keyListElements(key.children, depth + 1)
+          ) : ''}
         </div>
       )
     })
   }
 
   render() {
-    const classNames = [
-      css.KeyList,
-      this.props.className || ''
-    ].join(' ')
+    const className = classNames(css.KeyList, this.props.className)
+
     return (
-      <div className={classNames}>
-        {this.keyListElements}
+      <div className={className}>
+        {this.keyListElements(this.state.keyList)}
       </div>
     )
   }
