@@ -161,25 +161,27 @@ class ResponseRepr extends React.Component<I.IProps, I.IState> {
     const colAmt = keys.length
 
     return (
-      <div className={css.table}
-        style={{gridTemplateColumns: `repeat(${colAmt}, auto)`}}>
-          {this.filterInput()}
-          {this.columns()}
-          {this.processedResponse().map((row, i) => {
-            const cls = (j) => {
-              return classNames(css.cell, {
-                [css.rowStart]: j % colAmt === 0,
-                [css.rowEnd]: j % colAmt === colAmt - 1,
-              })
-            }
+      <div>
+        {this.filterInput()}
+        <div className={css.table}
+          style={{gridTemplateColumns: `repeat(${colAmt}, auto)`}}>
+            {this.columns()}
+            {this.processedResponse().map((row, i) => {
+              const cls = (j) => {
+                return classNames(css.cell, {
+                  [css.rowStart]: j % colAmt === 0,
+                  [css.rowEnd]: j % colAmt === colAmt - 1,
+                })
+              }
 
-            return (
-              <RObject className={cls}
-                key={`row-${i}`}
-                data={row} />
-            )
-          })}
-        </div>
+              return (
+                <RObject className={cls}
+                  key={`row-${i}`}
+                  data={row} />
+              )
+            })}
+          </div>
+      </div>
       )
   }
 
