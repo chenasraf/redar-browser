@@ -4,10 +4,6 @@ export interface IProps {
 }
 
 export interface IState {
-  url: string
-  method: string
-  requestPayload: string
-  headers: string
 }
 
 export type ReqTypeTransformer = (str: string) => string

@@ -9,50 +9,8 @@ class RequestHeaders extends React.Component<I.IProps, I.IState> {
   constructor(props: I.IProps) {
     super(props)
     this.state = {
-      headers: this.parseStringHeaders(props.store.get(StoreKeys.RequestHeaders, ''))
+      headers: props.store.get(StoreKeys.RequestHeaders, Immutable.List<[string, string]>())
     }
-  }
-
-  private parseStringHeaders(headers: string) {
-    let headerMap = Immutable.List<[string, string]>()
-
-    headers.split('\n').forEach((header, idx) => {
-      const [ name, value ] = header.split(':').map(s => s.trim())
-      const finalName = name.split('-')
-        .map(s => this.capitalize(s))
-        .join('-')
-
-      if (finalName) {
-        headerMap = headerMap.set(idx, [finalName, value || ''])
-      }
-    })
-
-    return headerMap
-  }
-
-  private get stringHeaders() {
-    const seq = this.state.headers.entrySeq()
-
-    return seq
-      .map((header) => {
-        if (!header) {
-          return
-        }
-        let [ name, value ] = header[1]
-        name = name.split('-').map(s => this.capitalize(s)).join('-')
-        return name ?
-          `${name}: ${value}`
-        : undefined
-      })
-      .filter(s => Boolean(s))
-      .join('\n')
-  }
-
-  private capitalize(str: string) {
-    if (!str) {
-      return ''
-    }
-    return str[0].toUpperCase() + str.slice(1).toLowerCase()
   }
 
   private updateHeaderName(idx: number, name: string) {
@@ -60,7 +18,7 @@ class RequestHeaders extends React.Component<I.IProps, I.IState> {
     this.setState({
       headers: this.state.headers.set(idx, [name, value[1]])
     }, () => {
-      dispatch(ActionTypes.UPDATE_REQ_HEADERS, this.stringHeaders)
+      dispatch(ActionTypes.UPDATE_REQ_HEADERS, this.state.headers)
     })
   }
 
@@ -70,7 +28,7 @@ class RequestHeaders extends React.Component<I.IProps, I.IState> {
     this.setState({
       headers: this.state.headers.set(idx, [header[0], value || ''])
     }, () => {
-      dispatch(ActionTypes.UPDATE_REQ_HEADERS, this.stringHeaders)
+      dispatch(ActionTypes.UPDATE_REQ_HEADERS, this.state.headers)
     })
   }
 

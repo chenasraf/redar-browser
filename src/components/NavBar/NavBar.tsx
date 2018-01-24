@@ -23,6 +23,12 @@ class NavBar extends React.Component<I.IProps, I.IState> {
     }
   }
 
+  public componentWillMount() {
+    if (this.state.url.length) {
+      this.go()
+    }
+  }
+
   private changeMethod(value: I.Methods) {
     dispatch(ActionTypes.UPDATE_REQ_METHOD, value)
     this.setState({ method: value })
@@ -42,6 +48,8 @@ class NavBar extends React.Component<I.IProps, I.IState> {
   }
 
   private go() {
+    dispatch(ActionTypes.SEND_REQUEST, null)
+
     if (this.props.onSend) {
       const { method, url } = this.state
       this.props.onSend({ method, url })
