@@ -10,24 +10,22 @@ class RObject extends React.Component<I.IProps, I.IState> {
   
   private getCorrectRepr(obj: any) {
     let cls = this.props.className
+
     try {
       switch (typeof obj) {
         case 'number':
         case 'string':
-          return <span className={css.simple}>{obj}</span>
+          return <span className={css.RObject}>{obj}</span>
         default:
           const keys = obj ? Object.keys(obj) : []
           const isArray = obj && obj.constructor === Array
 
           if (!keys.length) {
-            if (typeof cls === 'function') {
-              cls = cls()
-            }
-            return <span className={cls}>{JSON.stringify(obj)}</span>
+            return <span className={css.RObject}>{JSON.stringify(obj)}</span>
           }
 
           return keys.map((k: string, i: number) => {
-            let tempCls = cls
+            let tempCls = this.props.className
             if (typeof tempCls === 'function') {
               tempCls = tempCls(i, k)
             }
@@ -41,7 +39,7 @@ class RObject extends React.Component<I.IProps, I.IState> {
           })
       }
     } catch (e) {
-      return <span className={css.simple}>{typeof obj}</span>
+      return <span className={css.RObject}>{typeof obj}</span>
     }
   }
 
