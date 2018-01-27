@@ -10,6 +10,7 @@ export interface ContainerProps {
 export interface ContainerState {
   children: JSX.Element[]
   activeIdx: number
+  collapsible: boolean
   collapsed: boolean
 }
 

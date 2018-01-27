@@ -8,6 +8,10 @@
   border-bottom: 1px solid #ccc;
   margin-top: -1px;
   margin-bottom: 10px;
+
+  &.collapsed {
+    margin-bottom: -10px;
+  }
 }
 
 .tab-label {
@@ -33,4 +37,16 @@
 
 .tab-content {
   width: 100%;
+}
+
+.collapse-icon {
+  font-size: 1.1em;
+  transform: rotate(0deg);
+  float: right;
+  cursor: pointer;
+  transition: transform 0.1s ease-in-out;
+
+  &.collapsed {
+    transform: rotate(180deg);
+  }
 }
