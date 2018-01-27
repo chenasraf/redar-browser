@@ -1,6 +1,6 @@
 {
   "name": "redar-extension",
-  "version": "0.5.4",
+  "version": "0.6.0",
   "private": true,
   "homepage": "https://redar.com/",
   "scripts": {
@@ -8,6 +8,7 @@
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
     "zip": "cd build && zip -r ../extension.zip *",
+    "deploy": "yarn build && yarn zip",
     "test": "node scripts/test.js --env=jsdom",
     "scaffold": "node scripts/scaffold.js"
   },
