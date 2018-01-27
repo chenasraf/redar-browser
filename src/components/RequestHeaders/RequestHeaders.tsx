@@ -15,9 +15,7 @@ class RequestHeaders extends React.Component<I.IProps, I.IState> {
 
   private updateHeaderName(idx: number, name: string) {
     const value = this.state.headers.get(idx, [name, ''])
-    this.setState({
-      headers: this.state.headers.set(idx, [name, value[1]])
-    }, () => {
+    this.setState({ headers: this.state.headers.set(idx, [name, value[1]]) }, () => {
       dispatch(ActionTypes.UPDATE_REQ_HEADERS, this.state.headers)
     })
   }
@@ -25,9 +23,7 @@ class RequestHeaders extends React.Component<I.IProps, I.IState> {
   private updateHeaderValue(idx: number, value: string) {
     const header = this.state.headers.get(idx, ['', ''])
 
-    this.setState({
-      headers: this.state.headers.set(idx, [header[0], value || ''])
-    }, () => {
+    this.setState({ headers: this.state.headers.set(idx, [header[0], value || '']) }, () => {
       dispatch(ActionTypes.UPDATE_REQ_HEADERS, this.state.headers)
     })
   }
@@ -41,7 +37,9 @@ class RequestHeaders extends React.Component<I.IProps, I.IState> {
   }
 
   private removeHeader(idx: number) {
-    this.setState({ headers: this.state.headers.remove(idx) })
+    this.setState({ headers: this.state.headers.remove(idx) }, () => {
+      dispatch(ActionTypes.UPDATE_REQ_HEADERS, this.state.headers)
+    })
   }
 
   render() {
