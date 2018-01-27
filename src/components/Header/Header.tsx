@@ -10,6 +10,7 @@ import { dispatch, register, ActionTypes, StoreKeys, Store } from 'common/Dispat
 import * as classNames from 'classnames'
 import NavBar from 'components/NavBar/NavBar'
 import RequestHeaders from 'components/RequestHeaders/RequestHeaders'
+const logo = require('../../../public/android-chrome-192x192.png')
 
 class Header extends React.Component<I.IProps, I.IState> {
   constructor(props: I.IProps) {
@@ -20,7 +21,10 @@ class Header extends React.Component<I.IProps, I.IState> {
   render() {
     return (
       <div className={classNames(css.header, this.props.className)}>
-        <NavBar store={this.props.store} />
+        <div className={css.navBarContainer}>
+          <img src={logo} />
+          <NavBar store={this.props.store} />
+        </div>
         <div className={css.requestDataContainer}>
           <RequestType store={this.props.store} />
           <RequestHeaders store={this.props.store} />
