@@ -14,7 +14,8 @@ class {{Name}} extends React.Component<I.IProps, I.IState> {
     
     return (
       <div className={className}>
-        {{Name}} Component
+        <h3>{{Name}} Component</h3>
+        {this.props.children}
       </div>
     )
   }
