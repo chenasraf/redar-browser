@@ -4,6 +4,7 @@ export interface ContainerProps {
   className?: string
   children: JSX.Element[] | JSX.Element
   collapsible?: boolean
+  rememberAs?: string
 }
 
 export interface ContainerState {

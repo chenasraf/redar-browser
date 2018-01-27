@@ -19,10 +19,21 @@ export class TabContainer extends React.Component<I.ContainerProps, I.ContainerS
 
     super(props)
     this.checkChildrenTypes(this.props.children, this.constructor.name)
+    let activeIdx = 0
+    if (props.rememberAs && props.rememberAs.length) {
+      try {
+        const tabCache = JSON.parse(localStorage.getItem('tabs') || '{}')
+        activeIdx = tabCache[props.rememberAs] || 0
+      } catch (e) {
+        console.warn(e)
+        activeIdx = 0
+      }
+    }
+      
     this.state = {
       children,
-      activeIdx: 0,
-      collapsed: false,
+      activeIdx,
+      collapsed: false
     }
   }
 
@@ -70,7 +81,13 @@ export class TabContainer extends React.Component<I.ContainerProps, I.ContainerS
 
   private onTabClick(idx: number, callback?: (e: React.MouseEvent<HTMLDivElement>) => void) {
     const commonClick = (e: React.MouseEvent<HTMLDivElement>) => {
-      this.setState({ activeIdx: idx })
+      this.setState({ activeIdx: idx }, () => {
+        if (this.props.rememberAs && this.props.rememberAs.length) {
+          const key = this.props.rememberAs
+          const tabCache = JSON.parse(localStorage.getItem('tabs') || '{}')
+          localStorage.setItem('tabs', JSON.stringify({ ...tabCache, [key]: this.state.activeIdx }))
+        }
+      })
     }
 
     if (callback) {
