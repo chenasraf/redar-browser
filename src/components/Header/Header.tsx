@@ -11,6 +11,7 @@ import { dispatch, register, ActionTypes, StoreKeys, Store } from 'common/Dispat
 import * as classNames from 'classnames'
 import NavBar from 'components/NavBar/NavBar'
 import RequestHeaders from 'components/RequestHeaders/RequestHeaders'
+import Transformer from 'components/Transformer/Transformer'
 const logo = require('../../../public/android-chrome-192x192.png')
 
 class Header extends React.Component<I.IProps, I.IState> {
@@ -26,10 +27,13 @@ class Header extends React.Component<I.IProps, I.IState> {
           <img src={logo} />
           <NavBar store={this.props.store} />
         </div>
-        <TabContainer collapsible={true}>
+        <TabContainer rememberAs="mainTabs" collapsible={true}>
           <Tab label="Data" className={css.requestDataContainer}>
             <RequestPayload store={this.props.store} />
             <RequestHeaders store={this.props.store} />
+          </Tab>
+          <Tab label="Transform Response">
+            <Transformer store={this.props.store} />
           </Tab>
         </TabContainer>
       </div>

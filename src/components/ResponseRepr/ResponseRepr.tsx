@@ -5,6 +5,8 @@ import * as D from 'common/Dispatcher'
 import RObject from 'components/RObject/RObject'
 import * as classNames from 'classnames'
 import { parse } from '../../filter-parser/filter.pegjs'
+import { Store } from 'common/Dispatcher'
+import { compileCode } from 'common/Trasformer'
 
 class ResponseRepr extends React.Component<I.IProps, I.IState> {
   private listeners: string[]
@@ -22,8 +24,9 @@ class ResponseRepr extends React.Component<I.IProps, I.IState> {
 
   componentDidMount() {
     this.listeners = [
-      D.register(D.ActionTypes.UPDATE_RESPONSE, (response) => {
-        const viewKey = this.props.store.get(D.StoreKeys.ViewKey)
+      D.register(D.ActionTypes.UPDATE_RESPONSE, () => {
+        const viewKey = Store.getState().get(D.StoreKeys.ViewKey)
+        let response = Store.getState().get(D.StoreKeys.Response)
         if (viewKey) {
           response = this.objectByPath(response, viewKey)
         }
@@ -31,9 +34,9 @@ class ResponseRepr extends React.Component<I.IProps, I.IState> {
       }),
 
       D.register(D.ActionTypes.UPDATE_VIEWKEY, (viewKey) => {
-        let response = this.props.store.get(D.StoreKeys.Response, {})
+        let response = Store.getState().get(D.StoreKeys.Response, {})
         response = response && viewKey ? this.objectByPath(response, viewKey) : response
-        this.setState({ response: response })
+        this.setState({ response })
       }),
     ]
   }
@@ -63,6 +66,8 @@ class ResponseRepr extends React.Component<I.IProps, I.IState> {
     let response = this.state.response || []
     const keys = Object.keys(response)
     const isArray = response.constructor === Array
+    const transform = this.props.store.get(D.StoreKeys.ResponseTransform)
+    
     if (!keys.length) {
       return [{ key: this.props.store.get(D.StoreKeys.ViewKey), value: JSON.stringify(response) }]
     }
@@ -71,68 +76,82 @@ class ResponseRepr extends React.Component<I.IProps, I.IState> {
       return [{ type: typeof response, value: JSON.stringify(response) }]
     }
 
-    if (!isArray) {
-      let flag = false
-      keys.forEach((key) => {
-        const row = response[key]
-        if (!row || !Object.keys(row || {}).length) {
-          flag = true
-        }
-      })
-
-      response = keys.map((key) => {
-        let row = response[key]
-        let oldVal: any
-        if (typeof row !== 'string' && typeof row !== 'number' && row) {
-          oldVal = row
-          if (flag) {
-            row = { key: row._id || row.id || key, value: row }
-          } else {
-            row = { key: row._id || row.id || key, ...row }
+    try {
+      if (!isArray) {
+        let flag = false
+        keys.forEach((key) => {
+          const row = response[key]
+          if (!row || !Object.keys(row || {}).length) {
+            flag = true
           }
+        })
+
+        response = keys.map((key) => {
+          let row = response[key]
+          let oldVal: any
+          if (typeof row !== 'string' && typeof row !== 'number' && row) {
+            oldVal = row
+            if (flag) {
+              row = { key: row._id || row.id || key, value: row }
+            } else {
+              row = { key: row._id || row.id || key, ...row }
+            }
+          } else {
+            flag = true
+            row = { key: key, value: row }
+          }
+          if (Object.keys(row).length < 2) {
+            row = { key: row.key, value: JSON.stringify(oldVal) }
+          }
+          return row
+        })
+      }
+
+      if (transform) {
+        const oldResponse = response
+        const transformed = compileCode(transform)({
+          console: console,
+          response
+        })
+        if (transformed) {
+          response = transformed
+          console.debug('transformed:', transformed)
         } else {
-          flag = true
-          row = { key: key, value: row }
+          throw new Error('response returned a falsy value')
         }
-        if (Object.keys(row).length < 2) {
-          row = { key: row.key, value: JSON.stringify(oldVal) }
-        }
-        return row
-      })
-    }
+      }
 
-    if (response[0].hasOwnProperty(this.state.sortKey)) {
-      const desc = this.state.sortDesc
-      const key = this.state.sortKey
+      if (response[0].hasOwnProperty(this.state.sortKey)) {
+        const desc = this.state.sortDesc
+        const key = this.state.sortKey
 
-      response = response.sort((a, b) => {
-        // numbers are matching
-        if (typeof a[key] === 'number' && typeof b === 'number' ||
-            isFinite(a[key]) && isFinite(b[key])) {
-          const result = parseFloat(a[key]) - parseFloat(b[key])
-          return desc ? -result : result
-        }
+        response = response.sort((a, b) => {
+          // numbers are matching
+          if (typeof a[key] === 'number' && typeof b === 'number' ||
+              isFinite(a[key]) && isFinite(b[key])) {
+            const result = parseFloat(a[key]) - parseFloat(b[key])
+            return desc ? -result : result
+          }
 
-        if (a[key] > b[key]) {
-          return desc ? -1 : 1
-        // tslint:disable-next-line:triple-equals
-        } else if (a[key] == b[key]) {
-          return 0
-        } else if (a[key] < b[key]) {
-          return desc ? 1 : -1
-        }
+          if (a[key] > b[key]) {
+            return desc ? -1 : 1
+          // tslint:disable-next-line:triple-equals
+          } else if (a[key] == b[key]) {
+            return 0
+          } else if (a[key] < b[key]) {
+            return desc ? 1 : -1
+          }
 
-        if (!a && !b) {
-          return 0
-        }
+          if (!a && !b) {
+            return 0
+          }
 
-        return a.valueOf() - b.valueOf()
-      })
-    }
-    
-    if (this.state.filter.trim().length) {
-      const filter = this.state.filter.trim().replace(/\s{2,}/g, ' ')
-      try {
+          return a.valueOf() - b.valueOf()
+        })
+      }
+      
+      if (this.state.filter.trim().length) {
+        const filter = this.state.filter.trim().replace(/\s{2,}/g, ' ')
         const filterOps = parse(filter)
 
         response = response.filter((row) => {
@@ -161,9 +180,9 @@ class ResponseRepr extends React.Component<I.IProps, I.IState> {
             }
           }
         })
-      } catch (e) {
-        console.warn(e)
       }
+    } catch (e) {
+      console.warn(e)
     }
 
     return response

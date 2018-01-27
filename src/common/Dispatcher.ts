@@ -4,6 +4,7 @@ import * as Immutable from 'immutable'
 import axios, { AxiosResponse } from 'axios'
 import * as Headers from 'common/Headers'
 import * as Payload from 'common/Payload'
+import { compileCode } from 'common/Trasformer'
 
 const ActionTypes = {
   SEND_REQUEST: 'SEND_REQUEST',
@@ -14,6 +15,8 @@ const ActionTypes = {
   UPDATE_REQ_METHOD: 'UPDATE_REQ_METHOD',
   UPDATE_REQ_HEADERS: 'UPDATE_REQ_HEADERS',
   UPDATE_REQ_URL: 'UPDATE_REQ_URL',
+  UPDATE_RES_TRANSFORM: 'UPDATE_RES_TRANSFORM',
+  UPDATE_RES_TRANSFORM_ERROR: 'UPDATE_RES_TRANSFORM_ERROR',
 }
 
 const StoreKeys = {
@@ -24,10 +27,13 @@ const StoreKeys = {
   RequestMethod: 'REQ_METHOD',
   RequestHeaders: 'REQ_HEADERS',
   RequestURL: 'REQ_URL',
+  ResponseTransform: 'RES_TRANSFORM',
+  ResponseTransformError: 'RES_TRANSFORM.ERROR',
 }
 
-export type TActionName =
-  'UPDATE_RESPONSE' | 'UPDATE_TABLE' | 'UPDATE_COLUMNS' | 'UPDATE_VIEWKEY' | 'UPDATE_REQ_TYPE' | 'SEND_REQUEST'
+export type TActionName = 
+'SEND_REQUEST' | 'UPDATE_RESPONSE' | 'UPDATE_VIEWKEY' | 'UPDATE_REQ_TYPE' | 'UPDATE_REQ_PAYLOAD' | 
+'UPDATE_REQ_METHOD' | 'UPDATE_REQ_HEADERS' | 'UPDATE_REQ_URL' | 'UPDATE_RES_TRANSFORM'
 
 export interface IAction<T = any> {
   name: TActionName | string,
@@ -55,6 +61,7 @@ class AppStore extends ReduceStore<IState, IAction> {
       [StoreKeys.RequestPayload, localStorage.lastPayload || '""'],
       [StoreKeys.RequestURL, localStorage.lastURL || ''],
       [StoreKeys.RequestHeaders, Headers.parseHeaderList(localStorage.lastHeaders || '')],
+      [StoreKeys.ResponseTransform, localStorage.lastResTransform || ''],
     ])
   }
 
@@ -62,11 +69,15 @@ class AppStore extends ReduceStore<IState, IAction> {
     switch (action.name) {
       case ActionTypes.UPDATE_RESPONSE:
         let viewKey = state.get(StoreKeys.ViewKey)
-        if (localStorage.lastViewKey !== '' && action.payload && !action.payload.hasOwnProperty(viewKey)) {
-          viewKey = this.getViewKey(action.payload)
+        let response = action.payload
+        state = state.set(StoreKeys.ResponseTransformError, '')
+
+        if (localStorage.lastViewKey !== '' && response && !response.hasOwnProperty(viewKey)) {
+          viewKey = this.getViewKey(response)
           state = state.set(StoreKeys.ViewKey, viewKey)
         }
-        return state.set(StoreKeys.Response, action.payload)
+        
+        return state.set(StoreKeys.Response, response)
       case ActionTypes.UPDATE_VIEWKEY:
         localStorage.lastViewKey = action.payload
         return state.set(StoreKeys.ViewKey, action.payload)
@@ -82,6 +93,11 @@ class AppStore extends ReduceStore<IState, IAction> {
       case ActionTypes.UPDATE_REQ_PAYLOAD:
         localStorage.lastPayload = action.payload
         return state.set(StoreKeys.RequestPayload, action.payload)
+      case ActionTypes.UPDATE_RES_TRANSFORM:
+        localStorage.lastResTransform = action.payload
+        return state.set(StoreKeys.ResponseTransform, action.payload)
+      case ActionTypes.UPDATE_RES_TRANSFORM_ERROR:
+        return state.set(StoreKeys.ResponseTransformError, action.payload)
       case ActionTypes.SEND_REQUEST:
         if (!action.payload) {
           action.payload = {
@@ -93,8 +109,8 @@ class AppStore extends ReduceStore<IState, IAction> {
           }
         }
         axios.request(action.payload)
-          .then((response: AxiosResponse) => {
-            dispatch(ActionTypes.UPDATE_RESPONSE, response.data)
+          .then((resp: AxiosResponse) => {
+            dispatch(ActionTypes.UPDATE_RESPONSE, resp.data)
           })
         return state
       default:

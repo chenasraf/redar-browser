@@ -1,0 +1,35 @@
+@import "../../_variables.css";
+
+.Transformer {
+  & .textarea {
+    width: 100%;
+    min-height: 80px;
+    font-family: 'Courier', monospace;
+    border: 1px solid #ccc;
+
+    &.has-error {
+      border: 1px solid #cc9;
+      background: #ffc;
+    }
+  }
+
+  & pre {
+    display: inline-block;
+    font-family: 'Courier', monospace;
+    font-size: 0.95em;
+  }
+}
+
+.title {
+  text-transform: uppercase;
+  color: #555;
+  margin-bottom: 5px;
+  font-weight: bold;
+  font-size: 0.8em;
+}
+
+.info {
+  font-size: 0.8em;
+  color: #666;
+  margin-bottom: 5px;
+}
