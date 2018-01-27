@@ -2,7 +2,7 @@ import * as React from 'react'
 import * as css from './Header.css'
 import * as I from './Header.module'
 import AddressBar from 'components/AddressBar/AddressBar'
-import RequestType from 'components/RequestType/RequestType'
+import RequestPayload from 'components/RequestPayload/RequestPayload'
 import SelectBox, { Option, styles as selectBoxStyle } from 'components/SelectBox/SelectBox'
 import Button from 'components/Button/Button'
 import axios, { AxiosResponse } from 'axios'
@@ -26,7 +26,7 @@ class Header extends React.Component<I.IProps, I.IState> {
           <NavBar store={this.props.store} />
         </div>
         <div className={css.requestDataContainer}>
-          <RequestType store={this.props.store} />
+          <RequestPayload store={this.props.store} />
           <RequestHeaders store={this.props.store} />
         </div>
       </div>

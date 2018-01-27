@@ -54,7 +54,8 @@ class KeyList extends React.Component<I.IProps, I.IState> {
       const newPath = relativePath ? [relativePath, key].join('.') : key
       let children
       
-      if (typeof data[key] !== 'string' && typeof data[key] !== 'number' && 
+      if (data[key] !== null && data[key] !== undefined &&
+          typeof data[key] !== 'string' && typeof data[key] !== 'number' && 
           data[key].constructor !== Array && Object.keys(data[key]).length) {
         children = this.keyListFromObject(data[key], newPath)
       }

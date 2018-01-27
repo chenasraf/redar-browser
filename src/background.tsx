@@ -1,8 +1,11 @@
 import axios, { AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios'
 
-chrome.browserAction.onClicked.addListener((activeTab) => {
-    const newURL = chrome.extension.getURL('index.html')
-    chrome.tabs.create({ url: newURL })
+console.debug('registering browser button click')
+chrome.browserAction.onClicked.addListener(() => {
+  console.debug('firing browser button callback')
+  const newURL = chrome.extension.getURL('index.html')
+  // chrome.tabs.create({ url: newURL })
+  window.open(newURL)
 })
 
 interface Action {

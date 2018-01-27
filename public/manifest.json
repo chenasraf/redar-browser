@@ -13,6 +13,7 @@
     "default_icon": "android-chrome-192x192.png"
   },
   "permissions": [
+    "tabs",
     "http://*/",
     "https://*/"
   ]

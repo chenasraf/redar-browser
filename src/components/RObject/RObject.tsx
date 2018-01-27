@@ -25,11 +25,20 @@ class RObject extends React.Component<I.IProps, I.IState> {
             return <span className={css.simple}>{JSON.stringify(obj)}</span>
           }
 
-          return keys.map((k: string, i: number) => {
+          return keys.sort((a, b) => {
+            if (a === 'key') {
+              return -1
+            } else if (b === 'key') {
+              return 1
+            }
+      
+            return a > b ? 1 : a < b ? -1 : 0
+          }).map((k: string, i: number) => {
             let tempCls = this.props.className
             if (typeof tempCls === 'function') {
               tempCls = tempCls(i, k)
             }
+
             cls = classNames(tempCls, css.RObject)
             return (
               <div className={cls} key={'obj-' + k}>

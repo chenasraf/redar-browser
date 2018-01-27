@@ -1,30 +1,26 @@
 import * as React from 'react'
-import * as css from './RequestType.css'
-import * as I from './RequestType.module'
+import * as css from './RequestPayload.css'
+import * as I from './RequestPayload.module'
 import { StoreKeys, dispatch, ActionTypes, register } from 'common/Dispatcher'
 import * as classNames from 'classnames'
 import RequestTypeSelector from 'components/RequestTypeSelector/RequestTypeSelector'
 
-class RequestType extends React.Component<I.IProps, I.IState> {
+class RequestPayload extends React.Component<I.IProps, I.IState> {
   private listeners: string[]
-  
-  private typeMap = {
-    JSON: JSON.parse,
-    Form: String
-  }
 
   constructor(props: I.IProps) {
     super(props)
+    const type = props.store.get(StoreKeys.RequestType)
+    const payload = props.store.get(StoreKeys.RequestPayload, '""')
     this.state = {
-      type: props.store.get(StoreKeys.RequestType),
-      payload: props.store.get(StoreKeys.RequestPayload),
+      type,
+      payload: JSON.parse(payload),
     }
   }
 
-  private onChange(str: string) {
-    this.setState({ payload: str }, () => {
-      const payload = this.requestPayload
-      dispatch(ActionTypes.UPDATE_REQ_PAYLOAD, payload)
+  private onChange(payload: string) {
+    this.setState({ payload }, () => {
+      dispatch(ActionTypes.UPDATE_REQ_PAYLOAD, JSON.stringify(payload))
       if (this.props.onChange) {
         this.props.onChange(payload)
       }
@@ -37,21 +33,6 @@ class RequestType extends React.Component<I.IProps, I.IState> {
         this.setState({ type })
       })
     ]
-  }
-
-  private get requestPayload() {
-    if (!this.state.type
-        || !this.typeMap.hasOwnProperty(this.state.type)
-        || !this.state.payload.length) {
-      return undefined
-    }
-
-    try {
-      return this.typeMap[this.state.type](this.state.payload)
-    } catch (e) {
-      console.error(e)
-      return "Can't parse response"
-    }
   }
 
   render() {
@@ -72,4 +53,4 @@ class RequestType extends React.Component<I.IProps, I.IState> {
   }
 }
 
-export default RequestType
+export default RequestPayload

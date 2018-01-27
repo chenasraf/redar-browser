@@ -2,6 +2,8 @@ import { Dispatcher } from 'flux'
 import { ReduceStore } from 'flux/utils'
 import * as Immutable from 'immutable'
 import axios, { AxiosResponse } from 'axios'
+import * as Headers from 'common/Headers'
+import * as Payload from 'common/Payload'
 
 const ActionTypes = {
   SEND_REQUEST: 'SEND_REQUEST',
@@ -50,9 +52,9 @@ class AppStore extends ReduceStore<IState, IAction> {
       [StoreKeys.ViewKey, localStorage.lastViewKey || ''],
       [StoreKeys.RequestType, localStorage.lastRequestType || 'JSON'],
       [StoreKeys.RequestMethod, localStorage.lastMethod || 'GET'],
-      [StoreKeys.RequestPayload, localStorage.lastPayload || ''],
+      [StoreKeys.RequestPayload, localStorage.lastPayload || '""'],
       [StoreKeys.RequestURL, localStorage.lastURL || ''],
-      [StoreKeys.RequestHeaders, this.parseHeaderList(localStorage.lastHeaders || '')],
+      [StoreKeys.RequestHeaders, Headers.parseHeaderList(localStorage.lastHeaders || '')],
     ])
   }
 
@@ -69,7 +71,7 @@ class AppStore extends ReduceStore<IState, IAction> {
         localStorage.lastViewKey = action.payload
         return state.set(StoreKeys.ViewKey, action.payload)
       case ActionTypes.UPDATE_REQ_HEADERS:
-        localStorage.lastHeaders = this.stringHeaders(action.payload)
+        localStorage.lastHeaders = Headers.stringHeaders(action.payload)
         return state.set(StoreKeys.RequestHeaders, action.payload)
       case ActionTypes.UPDATE_REQ_URL:
         localStorage.lastURL = action.payload
@@ -85,8 +87,9 @@ class AppStore extends ReduceStore<IState, IAction> {
           action.payload = {
             url: state.get(StoreKeys.RequestURL),
             method: state.get(StoreKeys.RequestMethod),
-            data: state.get(StoreKeys.RequestPayload),
-            headers: this.headerListToObject(state.get(StoreKeys.RequestHeaders, Immutable.List<[string, string]>())),
+            data: Payload.parsePayload(state.get(StoreKeys.RequestPayload), state.get(StoreKeys.RequestType)),
+            headers: 
+              Headers.headerListToObject(state.get(StoreKeys.RequestHeaders, Immutable.List<[string, string]>())),
           }
         }
         axios.request(action.payload)
@@ -97,56 +100,6 @@ class AppStore extends ReduceStore<IState, IAction> {
       default:
         return state
     }
-  }
-
-  public parseHeaderList(headers: string) {
-    let headerMap = Immutable.List<[string, string]>()
-
-    headers.split('\n').forEach((header, idx) => {
-      const [ name, value ] = header.split(':').map(s => s.trim())
-      const finalName = name.split('-')
-        .map(s => this.capitalize(s))
-        .join('-')
-
-      if (finalName) {
-        headerMap = headerMap.set(idx, [finalName, value || ''])
-      }
-    })
-
-    return headerMap
-  }
-
-  public headerListToObject(headers: Immutable.List<[string, string]>) {
-    const headerObj = {}
-    headers.toJS().forEach((header) => {
-      let [ name, value ] = header
-      name = name.split('-').map(s => this.capitalize(s)).join('-')
-      headerObj[name] = value
-    })
-    return headerObj
-  }
-
-  public stringHeaders(headers: Immutable.List<[string, string]>) {
-    return headers.entrySeq()
-      .map((header) => {
-        if (!header) {
-          return
-        }
-        let [ name, value ] = header[1]
-        name = name.split('-').map(s => this.capitalize(s)).join('-')
-        return name ?
-          `${name}: ${value}`
-        : undefined
-      })
-      .filter(s => Boolean(s))
-      .join('\n')
-  }
-  
-  private capitalize(str: string) {
-    if (!str) {
-      return ''
-    }
-    return str[0].toUpperCase() + str.slice(1).toLowerCase()
   }
 
   private getViewKey(data: any) {

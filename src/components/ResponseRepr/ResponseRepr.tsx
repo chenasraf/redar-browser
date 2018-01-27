@@ -58,35 +58,53 @@ class ResponseRepr extends React.Component<I.IProps, I.IState> {
       sortDesc: Boolean(cur.sortKey === key && !cur.sortDesc)
     }))
   }
-  
-  private columns() {
-    const keys = Object.keys(this.state.response[0] || {})
-    return keys.map((key) => {
-      const cls = classNames(css.sortIcon, 'material-icons', {
-        [css.active]: this.state.sortKey === key
-      })
-      
-      return (
-        <h3 key={`col-th-${key}`}
-          onClick={() => this.sortBy(key)}>
-          {key}
-          <i className={cls}>
-            {this.state.sortKey === key && this.state.sortDesc ? 'arrow_drop_down' : 'arrow_drop_up'}
-          </i>
-        </h3>
-      )
-    })
-  }
 
   private processedResponse() {
     let response = this.state.response || []
-    if (!response.length) {
-      return []
+    const keys = Object.keys(response)
+    const isArray = response.constructor === Array
+    if (!keys.length) {
+      return [{ key: this.props.store.get(D.StoreKeys.ViewKey), value: JSON.stringify(response) }]
+    }
+
+    if (typeof response === 'string' || typeof response === 'number' && response) {
+      return [{ type: typeof response, value: JSON.stringify(response) }]
+    }
+
+    if (!isArray) {
+      let flag = false
+      keys.forEach((key) => {
+        const row = response[key]
+        if (!row || !Object.keys(row || {}).length) {
+          flag = true
+        }
+      })
+
+      response = keys.map((key) => {
+        let row = response[key]
+        let oldVal: any
+        if (typeof row !== 'string' && typeof row !== 'number' && row) {
+          oldVal = row
+          if (flag) {
+            row = { key: row._id || row.id || key, value: row }
+          } else {
+            row = { key: row._id || row.id || key, ...row }
+          }
+        } else {
+          flag = true
+          row = { key: key, value: row }
+        }
+        if (Object.keys(row).length < 2) {
+          row = { key: row.key, value: JSON.stringify(oldVal) }
+        }
+        return row
+      })
     }
 
     if (response[0].hasOwnProperty(this.state.sortKey)) {
       const desc = this.state.sortDesc
       const key = this.state.sortKey
+
       response = response.sort((a, b) => {
         // numbers are matching
         if (typeof a[key] === 'number' && typeof b === 'number' ||
@@ -103,15 +121,19 @@ class ResponseRepr extends React.Component<I.IProps, I.IState> {
         } else if (a[key] < b[key]) {
           return desc ? 1 : -1
         }
-      })
 
+        if (!a && !b) {
+          return 0
+        }
+
+        return a.valueOf() - b.valueOf()
+      })
     }
     
     if (this.state.filter.trim().length) {
       const filter = this.state.filter.trim().replace(/\s{2,}/g, ' ')
       try {
         const filterOps = parse(filter)
-        console.debug({filterOps})
 
         response = response.filter((row) => {
           for (const key in filterOps) {
@@ -155,22 +177,59 @@ class ResponseRepr extends React.Component<I.IProps, I.IState> {
         onChange={(e) => this.setState({ filter: e.target.value })} />
     )
   }
+  
+  private columns(response: any[]) {
+    // const keyCollate = {}
+    // response.forEach((row) => {
+    //   Object.keys(row).forEach((k) => keyCollate[k] = true)
+    // })
+    // const keys = Object.keys(keyCollate)
+    const keys = Object.keys(response[0] || { key: null, value: null })
+
+    return keys.sort((a, b) => {
+      if (a === 'key') {
+        return -1
+      } else if (b === 'key') {
+        return 1
+      }
+
+      return a > b ? 1 : a < b ? -1 : 0
+    }).map((key) => {
+      const cls = classNames(css.sortIcon, 'material-icons', {
+        [css.active]: this.state.sortKey === key
+      })
+      
+      return (
+        <h3 key={`col-th-${key}`}
+          onClick={() => this.sortBy(key)}
+          className={classNames({ [css.keyColumn]: true })}>
+          {key}
+          <i className={cls}>
+            {this.state.sortKey === key && this.state.sortDesc ? 'arrow_drop_down' : 'arrow_drop_up'}
+          </i>
+        </h3>
+      )
+    })
+  }
 
   private table() {
-    const keys = Object.keys(this.state.response && this.state.response[0] || {})
-    const colAmt = keys.length
+    const response = this.processedResponse()
+    const columns = this.columns(response)
+    const firstLine = response && response.length ? response[0] : {}
+    const colAmt = columns.length - 1
 
     return (
       <div>
         {this.filterInput()}
+
         <div className={css.table}
-          style={{gridTemplateColumns: `repeat(${colAmt}, auto)`}}>
-            {this.columns()}
-            {this.processedResponse().map((row, i) => {
+          style={{gridTemplateColumns: `min-content repeat(${colAmt}, auto)`}}>
+            {columns}
+            {(response).map((row, i) => {
               const cls = (j) => {
                 return classNames(css.cell, {
-                  [css.rowStart]: j % colAmt === 0,
-                  [css.rowEnd]: j % colAmt === colAmt - 1,
+                  [css.rowStart]: j % (colAmt + 1) === 0,
+                  [css.rowEnd]: j % (colAmt + 1) === colAmt,
                 })
               }
 
@@ -185,24 +244,6 @@ class ResponseRepr extends React.Component<I.IProps, I.IState> {
       )
   }
 
-  private getRObjectList() {
-    const { response } = this.state
-    let colAmt
-
-    if (response && response.constructor === Array) {
-      return this.table()
-    }
-
-    colAmt = Object.keys(response || {})
-
-    return (
-      <div className={css.table}
-        style={{gridTemplateRows: `repeat(${colAmt}, min-content)`}}>
-        <RObject data={response} />
-      </div>
-    )
-  }
-
   render() {
     const className = [
       css.ResponseRepr,
@@ -211,7 +252,7 @@ class ResponseRepr extends React.Component<I.IProps, I.IState> {
     
     return (
       <div className={className}>
-        {this.getRObjectList()}
+        {this.table()}
       </div>
     )
   }

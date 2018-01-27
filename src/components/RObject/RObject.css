@@ -23,7 +23,7 @@
 
 .simple {
   display: inline-block;
-  max-width: 16vw;
+  max-width: 40vw;
   overflow: hidden;
   white-space: pre;
   text-overflow: ellipsis;
