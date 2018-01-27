@@ -25,6 +25,16 @@
   display: grid;
   width: 100%;
   grid-column-gap: 3px;
-  grid-template-columns: repeat(2, 50%);
+  grid-template-columns: min-content repeat(2, 1fr);
   min-width: 50%;
+
+  & .close {
+    vertical-align: middle;
+
+    & i {
+      cursor: pointer;
+      line-height: 1.9rem;
+      font-size: 1.2rem;
+    }
+  }
 }

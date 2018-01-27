@@ -4,13 +4,13 @@
   display: inline-block;
   background: #fff;
   filter: $drop-shadow;
-  // max-width: 20vw;
   padding: 7px;
   margin: 7px 5px;
   vertical-align: top;
   border: 1px solid #ccc;
   border-radius: 4px;
   min-width: 120px;
+  line-height: 1.1;
 
   & > h3 {
     font-size: 0.8rem;

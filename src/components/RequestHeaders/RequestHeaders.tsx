@@ -40,9 +40,14 @@ class RequestHeaders extends React.Component<I.IProps, I.IState> {
     return this.state.headers.get(idx, ['', ''])[1]
   }
 
+  private removeHeader(idx: number) {
+    this.setState({ headers: this.state.headers.remove(idx) })
+  }
+
   render() {
     const className = classNames(css.RequestHeaders, this.props.className)
     const inputRowRange = Immutable.Range(0, this.state.headers.count() + 1)
+    const moreThanOne = this.state.headers.count() > 0
     
     return (
       <div className={className}>
@@ -51,6 +56,12 @@ class RequestHeaders extends React.Component<I.IProps, I.IState> {
           return (
             <div key={`header-${i}`}
               className={css.pair}>
+              <div className={css.close}>
+                {moreThanOne && i < inputRowRange.count() - 1 ? (
+                  <i className="material-icons"
+                    onClick={() => this.removeHeader(i)}>close</i>
+                ) : ''}
+              </div>
               <div>
                 <input type="text" 
                   placeholder="Name"
